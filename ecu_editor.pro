@@ -24,10 +24,13 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    crc16_ccitt.c
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    ecu_protocol.h \
+    crc16_ccitt.h
 
 FORMS += \
         mainwindow.ui

@@ -3,9 +3,12 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    serial(new QSerialPort)
 {
     ui->setupUi(this);
+
+    connect(serial, &QSerialPort::readyRead, this, &MainWindow::serial_readyRead);
 
     QList<QSerialPortInfo> availablePorts = QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::iterator availablePorts_count;
