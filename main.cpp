@@ -50,12 +50,42 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
     }
 }
 
-void MainWindow::on_pushButton_send_clicked() {
-    ecu_write.cmd_addr.cmd = 1;
-    ecu_write.cmd_addr.addr = 2;
-    ecu_write.service_data.start = 3;
+void MainWindow::on_pushButton_15_clicked() {
+    ecu_write.cmd_addr.cmd = 4; //1 = 8b, 2 = 16b, 3 = 24b, 4 = 32b
+    ecu_write.cmd_addr.addr = 1;
+    ecu_write.service_data.start = 0;
     ecu_write.service_data.count = 4;
-    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = 5;
+    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<15);
+    *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
+    serial->write(reinterpret_cast<char*>(&ecu_write),12);
+}
+
+void MainWindow::on_pushButton_14_clicked() {
+    ecu_write.cmd_addr.cmd = 4; //1 = 8b, 2 = 16b, 3 = 24b, 4 = 32b
+    ecu_write.cmd_addr.addr = 1;
+    ecu_write.service_data.start = 0;
+    ecu_write.service_data.count = 4;
+    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<14);
+    *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
+    serial->write(reinterpret_cast<char*>(&ecu_write),12);
+}
+
+void MainWindow::on_pushButton_13_clicked() {
+    ecu_write.cmd_addr.cmd = 4; //1 = 8b, 2 = 16b, 3 = 24b, 4 = 32b
+    ecu_write.cmd_addr.addr = 1;
+    ecu_write.service_data.start = 0;
+    ecu_write.service_data.count = 4;
+    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<13);
+    *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
+    serial->write(reinterpret_cast<char*>(&ecu_write),12);
+}
+
+void MainWindow::on_pushButton_12_clicked() {
+    ecu_write.cmd_addr.cmd = 4; //1 = 8b, 2 = 16b, 3 = 24b, 4 = 32b
+    ecu_write.cmd_addr.addr = 1;
+    ecu_write.service_data.start = 0;
+    ecu_write.service_data.count = 4;
+    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<12);
     *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
     serial->write(reinterpret_cast<char*>(&ecu_write),12);
 }

@@ -34,7 +34,10 @@ private:
 
 private slots:
     void on_pushButton_Connect_toggled(bool state);
-    void on_pushButton_send_clicked();
+    void on_pushButton_15_clicked();
+    void on_pushButton_14_clicked();
+    void on_pushButton_13_clicked();
+    void on_pushButton_12_clicked();
     void serial_readyRead();
 };
 
