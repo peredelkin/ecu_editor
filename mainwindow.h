@@ -24,12 +24,12 @@ private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
 
-    uint16_t ecu_read_count;
-    uint16_t ecu_read_count_end;
+    uint16_t ecu_read_count = 0;
+    uint16_t ecu_read_count_end = 0;
     ecu_frame_t ecu_read;
 
-    uint16_t ecu_write_count;
-    uint16_t ecu_write_count_end;
+    uint16_t ecu_write_count = 0;
+    uint16_t ecu_write_count_end = 0;
     ecu_frame_t ecu_write;
 
 private slots:
