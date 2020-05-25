@@ -102,7 +102,7 @@ void MainWindow::serial_readyRead() {
                 uint16_t crc_calc = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_read),ecu_read_count_end - ECU_CRC_COUNT);
                 uint16_t crc_read = *reinterpret_cast<uint16_t*>(&ecu_read.data[ecu_read.service_data.count]);
                 if(crc_calc == crc_read) {
-                    uint32_t data = *reinterpret_cast<uint16_t*>(&ecu_read.data[ecu_read.service_data.count]);
+                    uint32_t data = *reinterpret_cast<uint32_t*>(&ecu_read.data[0]);
                     qDebug() << "Data:" << data;
                 } else {
                     qDebug() << "CRC Incorrect:" << crc_calc << crc_read;
