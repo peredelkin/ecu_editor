@@ -52,40 +52,42 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 
 void MainWindow::on_pushButton_15_clicked() {
     ecu_write.cmd_addr.cmd = 0x14; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 1;
+    ecu_write.cmd_addr.addr = 0;
     ecu_write.service_data.start = 0;
     ecu_write.service_data.count = 4;
     *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<15);
     *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
     serial->write(reinterpret_cast<char*>(&ecu_write),12);
+    qDebug() << "Write data" << (1<<15);
 }
 
 void MainWindow::on_pushButton_14_clicked() {
     ecu_write.cmd_addr.cmd = 0x14; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 1;
+    ecu_write.cmd_addr.addr = 0;
     ecu_write.service_data.start = 0;
     ecu_write.service_data.count = 4;
     *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<14);
     *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
     serial->write(reinterpret_cast<char*>(&ecu_write),12);
+    qDebug() << "Write data" << (1<<14);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
     ecu_write.cmd_addr.cmd = 0x14; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 1;
+    ecu_write.cmd_addr.addr = 0;
     ecu_write.service_data.start = 0;
     ecu_write.service_data.count = 4;
     *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<13);
     *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
     serial->write(reinterpret_cast<char*>(&ecu_write),12);
+    qDebug() << "Write data" << (1<<13);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
     ecu_write.cmd_addr.cmd = 0x24; //1 = 8b, 2 = 16b, 4 = 32b
     ecu_write.cmd_addr.addr = 1;
-    ecu_write.service_data.start = 0;
-    ecu_write.service_data.count = 4;
-    //*reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<12);
+    ecu_write.service_data.start = 960;
+    ecu_write.service_data.count = 64;
     *reinterpret_cast<uint16_t*>(&ecu_write.data[0]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 6);
     serial->write(reinterpret_cast<char*>(&ecu_write),8);
 }
@@ -102,8 +104,12 @@ void MainWindow::serial_readyRead() {
                 uint16_t crc_calc = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_read),ecu_read_count_end - ECU_CRC_COUNT);
                 uint16_t crc_read = *reinterpret_cast<uint16_t*>(&ecu_read.data[ecu_read.service_data.count]);
                 if(crc_calc == crc_read) {
-                    uint32_t data = *reinterpret_cast<uint32_t*>(&ecu_read.data[0]);
-                    qDebug() << "Data:" << data;
+                    uint8_t data_count = 0;
+                    while(data_count < 64) {
+                        float data = *reinterpret_cast<float*>(&ecu_read.data[data_count]);
+                        qDebug() << "Read" << (data_count/4) << "angle:" << data;
+                        data_count +=4;
+                    }
                 } else {
                     qDebug() << "CRC Incorrect:" << crc_calc << crc_read;
                 }
