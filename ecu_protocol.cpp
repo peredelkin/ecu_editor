@@ -1,6 +1,6 @@
 #include "ecu_protocol.h"
 
-void ECU_Protocol::ecu_read_frame_data(ecu_rw_t *ecu_r,volatile void **data) {
+void ECU_Protocol::read_frame_data(ecu_rw_t *ecu_r,volatile void **data) {
     uint8_t type = ecu_r->frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
     uint16_t write_start = (ecu_r->frame.service_data.start / type);
     uint16_t write_count = (ecu_r->frame.service_data.count / type) + 1;
@@ -23,52 +23,52 @@ void ECU_Protocol::ecu_read_frame_data(ecu_rw_t *ecu_r,volatile void **data) {
     }
 }
 
-void ECU_Protocol::ecu_write_frame_data(ecu_rw_t* ecu_w,volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count) {
-    ecu_w->frame.cmd_addr.cmd = cmd;
-    ecu_w->frame.cmd_addr.addr = addr;
-    ecu_w->frame.service_data.start = start;
-    ecu_w->frame.service_data.count = count;
-    uint8_t cmd_type = ecu_w->frame.cmd_addr.cmd & ECU_CMD_MASK;
+void ECU_Protocol::write_frame_data(volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count) {
+    protocol.write.frame.cmd_addr.cmd = cmd;
+    protocol.write.frame.cmd_addr.addr = addr;
+    protocol.write.frame.service_data.start = start;
+    protocol.write.frame.service_data.count = count;
+    uint8_t cmd_type = protocol.write.frame.cmd_addr.cmd & ECU_CMD_MASK;
     switch (cmd_type) {
-    case ECU_CMD_WRITE: {
-        ecu_w->count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
-        *(uint16_t*) (&ecu_w->frame.data[0]) =
-                crc16_ccitt((uint8_t*) (&ecu_w->frame), ecu_w->count);
+    case ECU_CMD_READ: {
+        protocol.write.count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
+        *(uint16_t*) (&protocol.write.frame.data[0]) =
+                crc16_ccitt((uint8_t*) (&protocol.write.frame), protocol.write.count);
     }
         break;
-    case ECU_CMD_READ: {
-        uint8_t data_type = ecu_w->frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
-        uint16_t read_start = (ecu_w->frame.service_data.start / data_type);
-        uint16_t read_count = (ecu_w->frame.service_data.count / data_type) + 1;
+    case  ECU_CMD_WRITE: {
+        uint8_t data_type = protocol.write.frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
+        uint16_t read_start = (protocol.write.frame.service_data.start / data_type);
+        uint16_t read_count = (protocol.write.frame.service_data.count / data_type) + 1;
         uint16_t point = 0;
         while (--read_count) {
             switch (data_type) {
-            case ECU_DATA_TYPE_8: ((uint8_t*)(ecu_w->frame.data))[point] =
-                    ((uint8_t*)(data[ecu_w->frame.cmd_addr.addr]))[read_start + point];
+            case ECU_DATA_TYPE_8: ((uint8_t*)(protocol.write.frame.data))[point] =
+                    ((uint8_t*)(data[protocol.write.frame.cmd_addr.addr]))[read_start + point];
                 break;
-            case ECU_DATA_TYPE_16: ((uint16_t*)(ecu_w->frame.data))[point] =
-                    ((uint16_t*)(data[ecu_w->frame.cmd_addr.addr]))[read_start + point];
+            case ECU_DATA_TYPE_16: ((uint16_t*)(protocol.write.frame.data))[point] =
+                    ((uint16_t*)(data[protocol.write.frame.cmd_addr.addr]))[read_start + point];
                 break;
-            case ECU_DATA_TYPE_32: ((uint32_t*)(ecu_w->frame.data))[point] =
-                    ((uint32_t*)(data[ecu_w->frame.cmd_addr.addr]))[read_start + point];
+            case ECU_DATA_TYPE_32: ((uint32_t*)(protocol.write.frame.data))[point] =
+                    ((uint32_t*)(data[protocol.write.frame.cmd_addr.addr]))[read_start + point];
                 break;
             default:
                 return;
             };
             point++;
         }
-        ecu_w->count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT + ecu_w->frame.service_data.count;
-        *(uint16_t*)(&ecu_w->frame.data[ecu_w->frame.service_data.count]) =
-                crc16_ccitt((uint8_t*)(&ecu_w->frame),ecu_w->count);
+        protocol.write.count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT + protocol.write.frame.service_data.count;
+        *(uint16_t*)(&protocol.write.frame.data[protocol.write.frame.service_data.count]) =
+                crc16_ccitt((uint8_t*)(&protocol.write.frame),protocol.write.count);
     }
         break;
     default:
         break;
     };
-    ecu_w->count += ECU_CRC_COUNT;
+    protocol.write.count += ECU_CRC_COUNT;
 }
 
-void ECU_Protocol::ecu_protocol_handler(QSerialPort *serial,volatile void **directory) {
+void ECU_Protocol::handler(QSerialPort *serial,volatile void **directory) {
     if(protocol.read.count_end != protocol.read.count) {
         if(serial->bytesAvailable() >= (protocol.read.count_end - protocol.read.count)) {
             serial->read(&(reinterpret_cast<char*>(&protocol.read.frame))[protocol.read.count],(protocol.read.count_end - protocol.read.count));
@@ -77,10 +77,10 @@ void ECU_Protocol::ecu_protocol_handler(QSerialPort *serial,volatile void **dire
             case ECU_CMD_TYPE_DEF: {
                 protocol.cmd_type = (uint8_t) ((protocol.read.frame.cmd_addr.cmd & ECU_CMD_MASK));
                 switch (protocol.cmd_type) {
-                case ECU_CMD_WRITE:
+                case ECU_CMD_READ:
                     protocol.read.count_end += protocol.read.frame.service_data.count + ECU_CRC_COUNT;
                     break;
-                case ECU_CMD_READ:
+                case ECU_CMD_WRITE:
                     protocol.read.count_end += ECU_CRC_COUNT;
                     break;
                 default:
@@ -92,7 +92,7 @@ void ECU_Protocol::ecu_protocol_handler(QSerialPort *serial,volatile void **dire
                 protocol.crc_read = *(uint16_t*)(&protocol.read.frame.data[protocol.read.frame.service_data.count]);
                 protocol.crc_calc = crc16_ccitt((uint8_t*)(&protocol.read.frame),protocol.read.count_end - ECU_CRC_COUNT);
                 if(protocol.crc_read == protocol.crc_calc) {
-                    ecu_read_frame_data(&protocol.read,directory);
+                    read_frame_data(&protocol.read,directory);
                 }
             }
                 break;
@@ -100,7 +100,7 @@ void ECU_Protocol::ecu_protocol_handler(QSerialPort *serial,volatile void **dire
                 protocol.crc_read = *(uint16_t*)(&protocol.read.frame.data[0]);
                 protocol.crc_calc = crc16_ccitt((uint8_t*)(&protocol.read.frame),protocol.read.count_end - ECU_CRC_COUNT);
                 if(protocol.crc_read == protocol.crc_calc) {
-                    ecu_write_frame_data(&protocol.write,
+                    write_frame_data(
                             directory,protocol.read.frame.cmd_addr.cmd,
                             protocol.read.frame.cmd_addr.addr,
                             protocol.read.frame.service_data.start,
@@ -118,4 +118,8 @@ void ECU_Protocol::ecu_protocol_handler(QSerialPort *serial,volatile void **dire
         protocol.read.count = 0;
         protocol.read.count_end = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
     }
+}
+
+void ECU_Protocol::send_frame(QSerialPort *serial) {
+    serial->write(reinterpret_cast<char*>(&protocol.write.frame),protocol.write.count);
 }

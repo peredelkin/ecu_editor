@@ -51,72 +51,43 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 }
 
 void MainWindow::on_pushButton_15_clicked() {
-    ecu_write.cmd_addr.cmd = 0x14; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 0;
-    ecu_write.service_data.start = 0;
-    ecu_write.service_data.count = 4;
-    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<15);
-    *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
-    serial->write(reinterpret_cast<char*>(&ecu_write),12);
-    qDebug() << "Write data" << (1<<15);
+    uint16_t count = 256;
+    uint16_t point = 0;
+    while(--count) {
+        ign_angle_mg_by_cycle[point] = static_cast<float>(0.1);
+        point++;
+    }
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    ecu_write.cmd_addr.cmd = 0x14; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 0;
-    ecu_write.service_data.start = 0;
-    ecu_write.service_data.count = 4;
-    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<14);
-    *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
-    serial->write(reinterpret_cast<char*>(&ecu_write),12);
-    qDebug() << "Write data" << (1<<14);
+    master_protocol.write_frame_data(NULL,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
+    master_protocol.send_frame(serial);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    ecu_write.cmd_addr.cmd = 0x14; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 0;
-    ecu_write.service_data.start = 0;
-    ecu_write.service_data.count = 4;
-    *reinterpret_cast<uint32_t*>(&ecu_write.data[0]) = (uint32_t)(1<<13);
-    *reinterpret_cast<uint16_t*>(&ecu_write.data[4]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 10);
-    serial->write(reinterpret_cast<char*>(&ecu_write),12);
+
     qDebug() << "Write data" << (1<<13);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    ecu_write.cmd_addr.cmd = 0x24; //1 = 8b, 2 = 16b, 4 = 32b
-    ecu_write.cmd_addr.addr = 1;
-    ecu_write.service_data.start = 960;
-    ecu_write.service_data.count = 64;
-    *reinterpret_cast<uint16_t*>(&ecu_write.data[0]) = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_write), 6);
-    serial->write(reinterpret_cast<char*>(&ecu_write),8);
+    qDebug() << "Array 0:" << ign_angle_mg_by_cycle[0];
+    qDebug() << "Array 1:" << ign_angle_mg_by_cycle[1];
+    qDebug() << "Array 2:" << ign_angle_mg_by_cycle[2];
+    qDebug() << "Array 3:" << ign_angle_mg_by_cycle[3];
+    qDebug() << "Array 4:" << ign_angle_mg_by_cycle[4];
+    qDebug() << "Array 5:" << ign_angle_mg_by_cycle[5];
+    qDebug() << "Array 6:" << ign_angle_mg_by_cycle[6];
+    qDebug() << "Array 7:" << ign_angle_mg_by_cycle[7];
+    qDebug() << "Array 8:" << ign_angle_mg_by_cycle[8];
+    qDebug() << "Array 9:" << ign_angle_mg_by_cycle[9];
+    qDebug() << "Array 10:" << ign_angle_mg_by_cycle[10];
+    qDebug() << "Array 11:" << ign_angle_mg_by_cycle[11];
+    qDebug() << "Array 12:" << ign_angle_mg_by_cycle[12];
+    qDebug() << "Array 13:" << ign_angle_mg_by_cycle[13];
+    qDebug() << "Array 14:" << ign_angle_mg_by_cycle[14];
+    qDebug() << "Array 15:" << ign_angle_mg_by_cycle[15];
 }
 
 void MainWindow::serial_readyRead() {
-    if(ecu_read_count_end != ecu_read_count) {
-        if(serial->bytesAvailable() >= (ecu_read_count_end - ecu_read_count)) {
-            serial->read(&(reinterpret_cast<char*>(&ecu_read)[ecu_read_count]),(ecu_read_count_end - ecu_read_count));
-            ecu_read_count = ecu_read_count_end;
-            if(ecu_read_count == (ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT)) {
-                ecu_read_count_end += ecu_read.service_data.count + ECU_CRC_COUNT;
-            }
-            if(ecu_read_count == ((ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT + ECU_CRC_COUNT) + ecu_read.service_data.count)) {
-                uint16_t crc_calc = crc16_ccitt(reinterpret_cast<uint8_t*>(&ecu_read),ecu_read_count_end - ECU_CRC_COUNT);
-                uint16_t crc_read = *reinterpret_cast<uint16_t*>(&ecu_read.data[ecu_read.service_data.count]);
-                if(crc_calc == crc_read) {
-                    uint8_t data_count = 0;
-                    while(data_count < 64) {
-                        float data = *reinterpret_cast<float*>(&ecu_read.data[data_count]);
-                        qDebug() << "Read" << (data_count/4) << "angle:" << data;
-                        data_count +=4;
-                    }
-                } else {
-                    qDebug() << "CRC Incorrect:" << crc_calc << crc_read;
-                }
-            }
-        }
-    } else {
-        ecu_read_count = 0;
-        ecu_read_count_end = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
-    }
+    master_protocol.handler(serial,ecu_addr_ptrs);
 }

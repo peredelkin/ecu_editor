@@ -31,7 +31,8 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     ecu_protocol.h \
-    crc16_ccitt.h
+    crc16_ccitt.h \
+    ign_angle_mg_by_cycle.h
 
 FORMS += \
         mainwindow.ui

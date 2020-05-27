@@ -59,9 +59,10 @@ typedef struct {
 class ECU_Protocol {
 
 public:
-    void ecu_read_frame_data(ecu_rw_t *ecu_r,volatile void **data);
-    void ecu_write_frame_data(ecu_rw_t* ecu_w,volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count);
-    void ecu_protocol_handler(QSerialPort *serial,volatile void **directory);
+    void read_frame_data(ecu_rw_t *ecu_r,volatile void **data);
+    void write_frame_data(volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count);
+    void handler(QSerialPort *serial,volatile void **directory);
+    void send_frame(QSerialPort *serial);
 private:
     ecu_protocol_t protocol;
 };

@@ -8,6 +8,7 @@
 #include <QSerialPortInfo>
 
 #include "ecu_protocol.h"
+#include "ign_angle_mg_by_cycle.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,14 +24,14 @@ public:
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
+    ECU_Protocol master_protocol;
 
-    uint16_t ecu_read_count = 0;
-    uint16_t ecu_read_count_end = 0;
-    ecu_frame_t ecu_read;
+    volatile float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N];
 
-    uint16_t ecu_write_count = 0;
-    uint16_t ecu_write_count_end = 0;
-    ecu_frame_t ecu_write;
+    volatile void *ecu_addr_ptrs[2] = {
+            NULL,
+            ign_angle_mg_by_cycle
+    };
 
 private slots:
     void on_pushButton_Connect_toggled(bool state);
