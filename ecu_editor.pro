@@ -25,7 +25,8 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    crc16_ccitt.c
+    crc16_ccitt.c \
+    ecu_protocol.cpp
 
 HEADERS += \
         mainwindow.h \
