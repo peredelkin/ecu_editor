@@ -18,10 +18,10 @@ void ECU_Protocol::read_frame_data(ecu_rw_t *ecu_r,volatile void **data) {
                 ((uint8_t*)(ecu_r->frame.data))[point];
             break;
         case ECU_DATA_TYPE_16: ((uint16_t*)(data[ecu_r->frame.cmd_addr.addr]))[write_start + point] =
-                ((uint16_t*)(&ecu_r->frame.data))[point];
+                ((uint16_t*)(ecu_r->frame.data))[point];
             break;
         case ECU_DATA_TYPE_32: ((uint32_t*)(data[ecu_r->frame.cmd_addr.addr]))[write_start + point] =
-                ((uint32_t*)(&ecu_r->frame.data))[point];
+                ((uint32_t*)(ecu_r->frame.data))[point];
             break;
         default:
             return;
