@@ -1,5 +1,12 @@
 #include "ecu_protocol.h"
 
+void ECU_Protocol::init() {
+    protocol.read.count = 0;
+    protocol.read.count_end = 0;
+    protocol.write.count = 0;
+    protocol.write.count_end = 0;
+}
+
 void ECU_Protocol::read_frame_data(ecu_rw_t *ecu_r,volatile void **data) {
     uint8_t type = ecu_r->frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
     uint16_t write_start = (ecu_r->frame.service_data.start / type);
@@ -30,13 +37,23 @@ void ECU_Protocol::write_frame_data(volatile void **data,uint8_t cmd,uint16_t ad
     protocol.write.frame.service_data.count = count;
     uint8_t cmd_type = protocol.write.frame.cmd_addr.cmd & ECU_CMD_MASK;
     switch (cmd_type) {
-    case ECU_CMD_READ: {
+#ifdef ECU_PROTOCOL_MASTER
+    case ECU_CMD_MASTER_WRITE:
+#else
+    case ECU_CMD_SLAVE_READ:
+#endif
+    {
         protocol.write.count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
         *(uint16_t*) (&protocol.write.frame.data[0]) =
                 crc16_ccitt((uint8_t*) (&protocol.write.frame), protocol.write.count);
     }
         break;
-    case  ECU_CMD_WRITE: {
+#ifdef ECU_PROTOCOL_MASTER
+    case ECU_CMD_MASTER_READ:
+#else
+    case ECU_CMD_SLAVE_WRITE:
+#endif
+    {
         uint8_t data_type = protocol.write.frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
         uint16_t read_start = (protocol.write.frame.service_data.start / data_type);
         uint16_t read_count = (protocol.write.frame.service_data.count / data_type) + 1;
@@ -77,10 +94,18 @@ void ECU_Protocol::handler(QSerialPort *serial,volatile void **directory) {
             case ECU_CMD_TYPE_DEF: {
                 protocol.cmd_type = (uint8_t) ((protocol.read.frame.cmd_addr.cmd & ECU_CMD_MASK));
                 switch (protocol.cmd_type) {
-                case ECU_CMD_READ:
+            #ifdef ECU_PROTOCOL_MASTER
+                case ECU_CMD_MASTER_WRITE:
+            #else
+                case ECU_CMD_SLAVE_READ:
+            #endif
                     protocol.read.count_end += protocol.read.frame.service_data.count + ECU_CRC_COUNT;
                     break;
-                case ECU_CMD_WRITE:
+            #ifdef ECU_PROTOCOL_MASTER
+                case ECU_CMD_MASTER_READ:
+            #else
+                case ECU_CMD_SLAVE_WRITE:
+            #endif
                     protocol.read.count_end += ECU_CRC_COUNT;
                     break;
                 default:
@@ -88,15 +113,27 @@ void ECU_Protocol::handler(QSerialPort *serial,volatile void **directory) {
                 };
             }
                 break;
-            case ECU_CMD_READ: {
+        #ifdef ECU_PROTOCOL_MASTER
+            case ECU_CMD_MASTER_WRITE:
+        #else
+            case ECU_CMD_SLAVE_READ:
+        #endif
+            {
                 protocol.crc_read = *(uint16_t*)(&protocol.read.frame.data[protocol.read.frame.service_data.count]);
                 protocol.crc_calc = crc16_ccitt((uint8_t*)(&protocol.read.frame),protocol.read.count_end - ECU_CRC_COUNT);
                 if(protocol.crc_read == protocol.crc_calc) {
                     read_frame_data(&protocol.read,directory);
+                } else {
+                    qDebug() << "CRC Error";
                 }
             }
                 break;
-            case ECU_CMD_WRITE: {
+        #ifdef ECU_PROTOCOL_MASTER
+            case ECU_CMD_MASTER_READ:
+        #else
+            case ECU_CMD_SLAVE_WRITE:
+        #endif
+            {
                 protocol.crc_read = *(uint16_t*)(&protocol.read.frame.data[0]);
                 protocol.crc_calc = crc16_ccitt((uint8_t*)(&protocol.read.frame),protocol.read.count_end - ECU_CRC_COUNT);
                 if(protocol.crc_read == protocol.crc_calc) {
@@ -106,6 +143,8 @@ void ECU_Protocol::handler(QSerialPort *serial,volatile void **directory) {
                             protocol.read.frame.service_data.start,
                             protocol.read.frame.service_data.count);
                     serial->write(reinterpret_cast<char*>(&protocol.write.frame),protocol.write.count);
+                } else {
+                    qDebug() << "CRC Error";
                 }
             }
                 break;

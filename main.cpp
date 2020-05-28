@@ -36,7 +36,7 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
             }
 
             ui->pushButton_Connect->setText("Close");
-
+            master_protocol.init();
             statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 5000);
 
         } else {
@@ -60,13 +60,13 @@ void MainWindow::on_pushButton_15_clicked() {
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    master_protocol.write_frame_data(NULL,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
+    master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
     master_protocol.send_frame(serial);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-
-    qDebug() << "Write data" << (1<<13);
+    master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_WRITE |ECU_DATA_TYPE_32),1,0,64);
+    master_protocol.send_frame(serial);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
