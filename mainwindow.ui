@@ -26,115 +26,120 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="gridLayoutWidget_2">
+   <widget class="QPushButton" name="pushButton_13">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>-1</y>
-      <width>1001</width>
-      <height>691</height>
+      <x>10</x>
+      <y>95</y>
+      <width>80</width>
+      <height>25</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="4" column="2">
-      <widget class="QPushButton" name="pushButton_13">
-       <property name="text">
-        <string>GPIOD 13</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="pushButton_14">
-       <property name="text">
-        <string>GPIOD 14</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2">
-      <widget class="QTableWidget" name="tableWidget">
+    <property name="text">
+     <string>GPIOD 13</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_14">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>64</y>
+      <width>80</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GPIOD 14</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="5">
+      <widget class="QComboBox" name="comboBox_StopBits">
        <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
+        <enum>QComboBox::AdjustToContents</enum>
        </property>
       </widget>
      </item>
      <item row="0" column="2">
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="5">
-        <widget class="QComboBox" name="comboBox_StopBits">
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="comboBox_standardBaudRates">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maxVisibleItems">
-          <number>5</number>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QComboBox" name="comboBox_Parity">
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="6">
-        <widget class="QPushButton" name="pushButton_Connect">
-         <property name="text">
-          <string>Open</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="comboBox_availablePorts">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maxVisibleItems">
-          <number>5</number>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="pushButton_15">
-       <property name="text">
-        <string>GPIOD 15</string>
+      <widget class="QComboBox" name="comboBox_standardBaudRates">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maxVisibleItems">
+        <number>5</number>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
-      <widget class="QPushButton" name="pushButton_12">
+     <item row="0" column="3">
+      <widget class="QComboBox" name="comboBox_Parity">
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6">
+      <widget class="QPushButton" name="pushButton_Connect">
        <property name="text">
-        <string>GPIOD 12</string>
+        <string>Open</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="comboBox_availablePorts">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maxVisibleItems">
+        <number>5</number>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
        </property>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="pushButton_15">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>33</y>
+      <width>80</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GPIOD 15</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_12">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>126</y>
+      <width>80</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GPIOD 12</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

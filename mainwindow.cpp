@@ -31,13 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox_StopBits->addItem("Stop Bits 1",QSerialPort::OneStop);
     ui->comboBox_StopBits->addItem("Stop Bits 1.5",QSerialPort::OneAndHalfStop);
     ui->comboBox_StopBits->addItem("Stop Bits 2",QSerialPort::TwoStop);
-
-    ui->tableWidget->setRowCount(16);
-    ui->tableWidget->setColumnCount(16);
-    QStringList tableWidget_VerticalHeaderLabels = {"29","57","85","113","141","169","197","225","253","281","309","337","365","393","421","449"};
-    ui->tableWidget->setVerticalHeaderLabels(tableWidget_VerticalHeaderLabels);
-    QStringList tableWidget_HorizontalHeaderLabels = {"600","720","840","990","1170","1380","1560","1950","2310","2730","3210","3840","4530","5370","6360","7650"};
-    ui->tableWidget->setHorizontalHeaderLabels(tableWidget_HorizontalHeaderLabels);
 }
 
 MainWindow::~MainWindow()
