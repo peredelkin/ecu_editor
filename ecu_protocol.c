@@ -7,8 +7,6 @@ void ecu_protocol_count_init(ecu_protocol_t* protocol) {
     protocol->write.count_end = 0;
 }
 
-#include "ecu_protocol.h"
-
 void ecu_read_frame_data(ecu_protocol_t* protocol,volatile void **data) {
     uint8_t type = protocol->read.frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
     uint16_t write_start = (protocol->read.frame.service_data.start / type);
@@ -39,13 +37,13 @@ void ecu_write_frame_data(ecu_protocol_t* protocol,volatile void **data,uint8_t 
     protocol->write.frame.service_data.count = count;
     uint8_t cmd_type = protocol->write.frame.cmd_addr.cmd & ECU_CMD_MASK;
     switch (cmd_type) {
-    case ECU_CMD_READ: { //slave write
+    case ECU_HANDLER_CMD_WRITE: {
         protocol->write.count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
         *(uint16_t*) (&protocol->write.frame.data[0]) =
                 crc16_ccitt((uint8_t*) (&protocol->write.frame), protocol->write.count);
     }
         break;
-    case ECU_CMD_WRITE: { //slave read
+    case ECU_HANDLER_CMD_READ: {
         uint8_t data_type = protocol->write.frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
         uint16_t read_start = (protocol->write.frame.service_data.start / data_type);
         uint16_t read_count = (protocol->write.frame.service_data.count / data_type) + 1;
@@ -87,10 +85,10 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
             case ECU_CMD_TYPE_DEF: {
                 protocol->cmd_type = (uint8_t) ((protocol->read.frame.cmd_addr.cmd & ECU_CMD_MASK));
                 switch (protocol->cmd_type) {
-                case ECU_CMD_READ: //slave write
+                case ECU_HANDLER_CMD_WRITE:
                     protocol->read.count_end += protocol->read.frame.service_data.count + ECU_CRC_COUNT;
                     break;
-                case ECU_CMD_WRITE: //slave read
+                case ECU_HANDLER_CMD_READ:
                     protocol->read.count_end += ECU_CRC_COUNT;
                     break;
                 default:
@@ -98,7 +96,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
                 };
             }
                 break;
-            case ECU_CMD_READ: { //slave write
+            case ECU_HANDLER_CMD_WRITE: {
                 protocol->crc_read = *(uint16_t*)(&protocol->read.frame.data[protocol->read.frame.service_data.count]);
                 protocol->crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->read.count_end - ECU_CRC_COUNT);
                 if(protocol->crc_read == protocol->crc_calc) {
@@ -106,7 +104,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
                 }
             }
                 break;
-            case ECU_CMD_WRITE: { //slave read
+            case ECU_HANDLER_CMD_READ: {
                 protocol->crc_read = *(uint16_t*)(&protocol->read.frame.data[0]);
                 protocol->crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->read.count_end - ECU_CRC_COUNT);
                 if(protocol->crc_read == protocol->crc_calc) {

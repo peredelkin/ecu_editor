@@ -3,6 +3,8 @@
 
 #include "crc16_ccitt.h"
 
+#define ECU_MASTER_PROTOCOL
+
 #define ECU_CMD_ADDR_COUNT 3
 #define ECU_SERVICE_DATA_COUNT 3
 #define ECU_DATA_COUNT 128
@@ -13,6 +15,18 @@
 #define ECU_CMD_WRITE		((uint8_t)0x10)
 #define ECU_CMD_READ		((uint8_t)0x20)
 #define ECU_CMD_MASK		((uint8_t)0xF0)
+
+#ifdef ECU_MASTER_PROTOCOL
+#define ECU_HANDLER_CMD_READ ECU_CMD_WRITE
+#else
+#define ECU_HANDLER_CMD_READ ECU_CMD_READ
+#endif
+
+#ifdef ECU_MASTER_PROTOCOL
+#define ECU_HANDLER_CMD_WRITE ECU_CMD_READ
+#else
+#define ECU_HANDLER_CMD_WRITE ECU_CMD_WRITE
+#endif
 
 #define ECU_DATA_TYPE_8		((uint8_t)0x01)
 #define ECU_DATA_TYPE_16	((uint8_t)0x02)
