@@ -123,7 +123,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
                 protocol->crc_read = *(uint16_t*)(&protocol->read.frame.data[protocol->read.frame.service_data.count]);
                 protocol->crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->read.count_end - ECU_CRC_COUNT);
                 if(protocol->crc_read == protocol->crc_calc) {
-                    ecu_read_frame_data(&protocol->read,directory);
+                    ecu_read_frame_data(protocol,directory);
                 }
             }
                 break;
@@ -136,7 +136,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
                 protocol->crc_read = *(uint16_t*)(&protocol->read.frame.data[0]);
                 protocol->crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->read.count_end - ECU_CRC_COUNT);
                 if(protocol->crc_read == protocol->crc_calc) {
-                    ecu_write_frame_data(&protocol->write,
+                    ecu_write_frame_data(protocol,
                             directory,protocol->read.frame.cmd_addr.cmd,
                             protocol->read.frame.cmd_addr.addr,
                             protocol->read.frame.service_data.start,
