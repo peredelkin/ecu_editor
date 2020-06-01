@@ -3,8 +3,6 @@
 
 #include "crc16_ccitt.h"
 
-#define ECU_PROTOCOL_MASTER
-
 #define ECU_CMD_ADDR_COUNT 3
 #define ECU_SERVICE_DATA_COUNT 3
 #define ECU_DATA_COUNT 128
@@ -15,12 +13,6 @@
 #define ECU_CMD_WRITE		((uint8_t)0x10)
 #define ECU_CMD_READ		((uint8_t)0x20)
 #define ECU_CMD_MASK		((uint8_t)0xF0)
-
-#define ECU_CMD_MASTER_WRITE ECU_CMD_READ
-#define ECU_CMD_MASTER_READ ECU_CMD_WRITE
-
-#define ECU_CMD_SLAVE_WRITE ECU_CMD_WRITE
-#define ECU_CMD_SLAVE_READ ECU_CMD_READ
 
 #define ECU_DATA_TYPE_8		((uint8_t)0x01)
 #define ECU_DATA_TYPE_16	((uint8_t)0x02)
@@ -62,7 +54,7 @@ typedef struct {
 } ecu_protocol_t;
 #pragma pack()
 
-extern void ecu_protocol_init(ecu_protocol_t* protocol);
+extern void ecu_protocol_count_init(ecu_protocol_t* protocol);
 extern void ecu_write_frame_data(ecu_protocol_t* protocol,volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count);
 extern void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t byte_available,volatile void **directory);
 

@@ -1,11 +1,13 @@
 #include "ecu_protocol.h"
 
-void ecu_protocol_init(ecu_protocol_t* protocol) {
+void ecu_protocol_count_init(ecu_protocol_t* protocol) {
     protocol->read.count = 0;
     protocol->read.count_end = 0;
     protocol->write.count = 0;
     protocol->write.count_end = 0;
 }
+
+#include "ecu_protocol.h"
 
 void ecu_read_frame_data(ecu_protocol_t* protocol,volatile void **data) {
     uint8_t type = protocol->read.frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
@@ -37,23 +39,13 @@ void ecu_write_frame_data(ecu_protocol_t* protocol,volatile void **data,uint8_t 
     protocol->write.frame.service_data.count = count;
     uint8_t cmd_type = protocol->write.frame.cmd_addr.cmd & ECU_CMD_MASK;
     switch (cmd_type) {
-    #ifdef ECU_PROTOCOL_MASTER
-    case ECU_CMD_MASTER_WRITE:
-    #else
-    case ECU_CMD_SLAVE_READ:
-    #endif
-    {
+    case ECU_CMD_READ: { //slave write
         protocol->write.count = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
         *(uint16_t*) (&protocol->write.frame.data[0]) =
                 crc16_ccitt((uint8_t*) (&protocol->write.frame), protocol->write.count);
     }
         break;
-    #ifdef ECU_PROTOCOL_MASTER
-    case ECU_CMD_MASTER_READ:
-    #else
-    case ECU_CMD_SLAVE_WRITE:
-    #endif
-    {
+    case ECU_CMD_WRITE: { //slave read
         uint8_t data_type = protocol->write.frame.cmd_addr.cmd & ECU_DATA_TYPE_MASK;
         uint16_t read_start = (protocol->write.frame.service_data.start / data_type);
         uint16_t read_count = (protocol->write.frame.service_data.count / data_type) + 1;
@@ -95,18 +87,10 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
             case ECU_CMD_TYPE_DEF: {
                 protocol->cmd_type = (uint8_t) ((protocol->read.frame.cmd_addr.cmd & ECU_CMD_MASK));
                 switch (protocol->cmd_type) {
-                #ifdef ECU_PROTOCOL_MASTER
-                case ECU_CMD_MASTER_WRITE:
-                #else
-                case ECU_CMD_SLAVE_READ:
-                #endif
+                case ECU_CMD_READ: //slave write
                     protocol->read.count_end += protocol->read.frame.service_data.count + ECU_CRC_COUNT;
                     break;
-                #ifdef ECU_PROTOCOL_MASTER
-                case ECU_CMD_MASTER_READ:
-                #else
-                case ECU_CMD_SLAVE_WRITE:
-                #endif
+                case ECU_CMD_WRITE: //slave read
                     protocol->read.count_end += ECU_CRC_COUNT;
                     break;
                 default:
@@ -114,12 +98,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
                 };
             }
                 break;
-            #ifdef ECU_PROTOCOL_MASTER
-            case ECU_CMD_MASTER_WRITE:
-            #else
-            case ECU_CMD_SLAVE_READ:
-            #endif
-            {
+            case ECU_CMD_READ: { //slave write
                 protocol->crc_read = *(uint16_t*)(&protocol->read.frame.data[protocol->read.frame.service_data.count]);
                 protocol->crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->read.count_end - ECU_CRC_COUNT);
                 if(protocol->crc_read == protocol->crc_calc) {
@@ -127,12 +106,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
                 }
             }
                 break;
-            #ifdef ECU_PROTOCOL_MASTER
-            case ECU_CMD_MASTER_READ:
-            #else
-            case ECU_CMD_SLAVE_WRITE:
-            #endif
-            {
+            case ECU_CMD_WRITE: { //slave read
                 protocol->crc_read = *(uint16_t*)(&protocol->read.frame.data[0]);
                 protocol->crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->read.count_end - ECU_CRC_COUNT);
                 if(protocol->crc_read == protocol->crc_calc) {
@@ -154,3 +128,4 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volat
         protocol->read.count_end = ECU_CMD_ADDR_COUNT + ECU_SERVICE_DATA_COUNT;
     }
 }
+
