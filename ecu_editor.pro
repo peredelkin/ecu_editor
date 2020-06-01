@@ -26,7 +26,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     crc16_ccitt.c \
-    ecu_protocol.cpp
+    ecu_protocol.c
 
 HEADERS += \
         mainwindow.h \

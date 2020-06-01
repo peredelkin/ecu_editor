@@ -36,8 +36,8 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
             }
 
             ui->pushButton_Connect->setText("Close");
-            master_protocol.init();
             statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 5000);
+            ecu_protocol_init(&ecu_master);
 
         } else {
             qDebug() << "Serial not opened. Error:"<<serial->errorString();
@@ -60,13 +60,15 @@ void MainWindow::on_pushButton_15_clicked() {
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
-    master_protocol.send_frame(serial);
+    //master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
+    ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
+    //master_protocol.send_frame(serial);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_WRITE |ECU_DATA_TYPE_32),1,0,64);
-    master_protocol.send_frame(serial);
+    //master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_WRITE |ECU_DATA_TYPE_32),1,0,64);
+    ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_WRITE |ECU_DATA_TYPE_32),1,0,64);
+    //master_protocol.send_frame(serial);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
@@ -88,6 +90,8 @@ void MainWindow::on_pushButton_12_clicked() {
     qDebug() << "Array 15:" << ign_angle_mg_by_cycle[15];
 }
 
+
+
 void MainWindow::serial_readyRead() {
-    master_protocol.handler(serial,ecu_addr_ptrs);
+    ecu_protocol_handler(&ecu_master,(uint8_t)serial->bytesAvailable(),ecu_addr_ptrs);
 }

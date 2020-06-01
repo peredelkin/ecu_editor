@@ -1,13 +1,7 @@
 #ifndef ECU_PROTOCOL_H
 #define ECU_PROTOCOL_H
 
-#include <stdint.h>
-#include <QDebug>
-#include <QSerialPort>
-
-extern "C" {
-    #include <crc16_ccitt.h>
-}
+#include "crc16_ccitt.h"
 
 #define ECU_PROTOCOL_MASTER
 
@@ -62,19 +56,14 @@ typedef struct {
     uint8_t cmd_type;
     uint16_t crc_calc;
     uint16_t crc_read;
+    void* port;
+    void (*serial_read)(void* port,uint8_t* data,uint8_t count);
+    void (*serial_write)(void* port,uint8_t* data,uint8_t count);
 } ecu_protocol_t;
 #pragma pack()
 
-class ECU_Protocol {
-
-public:
-    void init();
-    void read_frame_data(ecu_rw_t *ecu_r,volatile void **data);
-    void write_frame_data(volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count);
-    void handler(QSerialPort *serial,volatile void **directory);
-    void send_frame(QSerialPort *serial);
-private:
-    ecu_protocol_t protocol;
-};
+extern void ecu_protocol_init(ecu_protocol_t* protocol);
+extern void ecu_write_frame_data(ecu_protocol_t* protocol,volatile void **data,uint8_t cmd,uint16_t addr,uint16_t start,uint8_t count);
+extern void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t byte_available,volatile void **directory);
 
 #endif // ECU_PROTOCOL_H
