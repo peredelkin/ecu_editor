@@ -36,7 +36,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>GPIOD 13</string>
+     <string>Write</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_14">
@@ -49,10 +49,18 @@
      </rect>
     </property>
     <property name="text">
-     <string>GPIOD 14</string>
+     <string>Read</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>394</width>
+      <height>27</height>
+     </rect>
+    </property>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="5">
       <widget class="QComboBox" name="comboBox_StopBits">
@@ -125,7 +133,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>GPIOD 15</string>
+     <string>Fill</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_12">
@@ -138,7 +146,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>GPIOD 12</string>
+     <string>Show</string>
     </property>
    </widget>
   </widget>

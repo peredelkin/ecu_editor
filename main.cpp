@@ -60,15 +60,11 @@ void MainWindow::on_pushButton_15_clicked() {
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    //master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
-    ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_READ |ECU_DATA_TYPE_32),1,0,64);
-    //master_protocol.send_frame(serial);
+    //ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_READ | ECU_DATA_TYPE_32),1,0,64);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    //master_protocol.write_frame_data(ecu_addr_ptrs,(ECU_CMD_WRITE |ECU_DATA_TYPE_32),1,0,64);
-    ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_WRITE |ECU_DATA_TYPE_32),1,0,64);
-    //master_protocol.send_frame(serial);
+    //ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_WRITE | ECU_DATA_TYPE_32),1,0,64);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
@@ -90,7 +86,24 @@ void MainWindow::on_pushButton_12_clicked() {
     qDebug() << "Array 15:" << ign_angle_mg_by_cycle[15];
 }
 
-
+void MainWindow::ecu_protocol_ack_read(float *data) {
+    qDebug() << "Array 0:" << data[0];
+    qDebug() << "Array 1:" << data[1];
+    qDebug() << "Array 2:" << data[2];
+    qDebug() << "Array 3:" << data[3];
+    qDebug() << "Array 4:" << data[4];
+    qDebug() << "Array 5:" << data[5];
+    qDebug() << "Array 6:" << data[6];
+    qDebug() << "Array 7:" << data[7];
+    qDebug() << "Array 8:" << data[8];
+    qDebug() << "Array 9:" << data[9];
+    qDebug() << "Array 10:" << data[10];
+    qDebug() << "Array 11:" << data[11];
+    qDebug() << "Array 12:" << data[12];
+    qDebug() << "Array 13:" << data[13];
+    qDebug() << "Array 14:" << data[14];
+    qDebug() << "Array 15:" << data[15];
+}
 
 void MainWindow::serial_readyRead() {
     ecu_protocol_handler(&ecu_master,(uint8_t)serial->bytesAvailable(),ecu_addr_ptrs);

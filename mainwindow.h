@@ -39,13 +39,15 @@ private:
             ign_angle_mg_by_cycle
     };
 
-    static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,uint8_t count) {
+    static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,uint16_t count) {
         serial->read(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,uint8_t count) {
+    static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,uint16_t count) {
         serial->write(reinterpret_cast<char*>(data),count);
     }
+
+    static void ecu_protocol_ack_read(float * data);
 
 private slots:
     void on_pushButton_Connect_toggled(bool state);
