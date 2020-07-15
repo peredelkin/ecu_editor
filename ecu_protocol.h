@@ -66,7 +66,8 @@ typedef struct {
 
 #pragma pack()
 
+extern void ecu_protocol_init(ecu_protocol_t* protocol);
 extern void ecu_protocol_service_init(ecu_protocol_t* protocol);
-extern void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volatile void **directory);
+extern void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available);
 
 #endif // ECU_PROTOCOL_H

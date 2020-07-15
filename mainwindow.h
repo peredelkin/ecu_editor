@@ -48,7 +48,8 @@ private:
     }
 
     static void ecu_protocol_crc_correct(void*,ecu_protocol_t* protocol) {
-        qDebug() << "CRC Correct" << protocol->service.crc_read;
+        qDebug() << "CRC Correct:" << protocol->service.crc_read;
+        qDebug() << "Data 0:" << protocol->read.frame.data[0];
     }
 
     static void ecu_protocol_crc_incorrect(void*,ecu_protocol_t* protocol) {

@@ -65,7 +65,7 @@ void MainWindow::on_pushButton_14_clicked() {
 
 void MainWindow::on_pushButton_13_clicked() {
     ecu_master.write.frame.head.id = 1;
-    ecu_master.write.frame.head.count = 0;
+    ecu_master.write.frame.head.count = 1;
     ecu_master.write.frame.data[0] = 0x01;
 
     *(uint16_t*)(&ecu_master.write.frame.data[ecu_master.write.frame.head.count]) =
@@ -81,5 +81,5 @@ void MainWindow::on_pushButton_12_clicked() {
 }
 
 void MainWindow::serial_readyRead() {
-    ecu_protocol_handler(&ecu_master,(uint8_t)serial->bytesAvailable(),ecu_addr_ptrs);
+    ecu_protocol_handler(&ecu_master,(uint8_t)serial->bytesAvailable());
 }
