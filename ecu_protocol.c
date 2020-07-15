@@ -13,6 +13,20 @@ void ecu_protocol_service_init(ecu_protocol_t* protocol) {
     protocol->service.count_end = ECU_PROTOCOL_HEAD_COUNT;
 }
 
+void ecu_protocol_parse_frame(ecu_protocol_t* protocol) {
+    memcpy(&protocol->service.crc_read,&protocol->read.frame.data[protocol->read.frame.head.count],ECU_PROTOCOL_CRC_COUNT); //чтение контрольной суммы из фрейма
+    protocol->service.crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->service.count_end - ECU_PROTOCOL_CRC_COUNT); //расчет контрольной суммы фрейма
+    if(protocol->service.crc_read == protocol->service.crc_calc) { //контрольная сумма совпадает
+        if(protocol->crc_correct.callback) { //адрес указателя не равен нулю
+            protocol->crc_correct.callback(protocol->crc_correct.user_pointer,protocol); //вызов функции обработчик
+        }
+    } else {
+        if(protocol->crc_incorrect.callback) { //адрес указателя не равен нулю
+            protocol->crc_incorrect.callback(protocol->crc_incorrect.user_pointer,protocol); //вызов функции обработчик
+        }
+    }
+}
+
 void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available) {
     if(protocol->service.count_end != protocol->service.count) { //данные не обработаны
         if(bytes_available >= (protocol->service.count_end - protocol->service.count)) { //есть новая пачка данных
@@ -21,16 +35,12 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available) {
                     (protocol->service.count_end - protocol->service.count)); //чтение новых данных
             protocol->service.count = protocol->service.count_end; //сдвиг точки записи фрейма
             if(protocol->service.id) { //id определен
-                memcpy(&protocol->service.crc_read,&protocol->read.frame.data[protocol->read.frame.head.count],ECU_PROTOCOL_CRC_COUNT); //чтение контрольной суммы из фрейма
-                protocol->service.crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->service.count_end - ECU_PROTOCOL_CRC_COUNT); //расчет контрольной суммы фрейма
-                if(protocol->service.crc_read == protocol->service.crc_calc) { //контрольная сумма совпадает
-                    if(protocol->crc_correct.callback) { //адрес указателя не равен нулю
-                        protocol->crc_correct.callback(protocol->crc_correct.user_pointer,protocol); //вызов функции обработчик
+                if(protocol->service.addr) {//если слейв
+                    if(protocol->service.addr == protocol->read.frame.head.addr) { //адрес совпал
+                        ecu_protocol_parse_frame(protocol); //обработать фрейм
                     }
-                } else {
-                    if(protocol->crc_incorrect.callback) { //адрес указателя не равен нулю
-                        protocol->crc_incorrect.callback(protocol->crc_incorrect.user_pointer,protocol); //вызов функции обработчик
-                    }
+                } else { //иначе мастер
+                    ecu_protocol_parse_frame(protocol); //обработать фрейм
                 }
             } else {
                 protocol->service.id = protocol->read.frame.head.id; //определение id

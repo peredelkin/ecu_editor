@@ -3,10 +3,10 @@
 
 #include "crc16_ccitt.h"
 
-#define ECU_PROTOCOL_FRAME_COUNT 256
-#define ECU_PROTOCOL_HEAD_COUNT 2
-#define ECU_PROTOCOL_DATA_COUNT (ECU_PROTOCOL_FRAME_COUNT - ECU_PROTOCOL_HEAD_COUNT) //включая CRC
+#define ECU_PROTOCOL_HEAD_COUNT 3
 #define ECU_PROTOCOL_CRC_COUNT 2
+#define ECU_PROTOCOL_FRAME_COUNT 255
+#define ECU_PROTOCOL_DATA_COUNT (ECU_PROTOCOL_FRAME_COUNT - ECU_PROTOCOL_HEAD_COUNT) //crc included
 
 #define ECU_ID_DEFENITION               ((uint8_t)0x00)
 
@@ -24,6 +24,7 @@
 #pragma pack(1)
 
 typedef struct {
+    uint8_t addr;
     uint8_t id;
     uint8_t count;
 } ecu_protocol_head_t;
@@ -44,6 +45,7 @@ typedef struct {
 } ecu_protocol_transfer_t;
 
 typedef struct {
+    uint8_t addr; //0 if master
     uint8_t id;
     uint16_t count;
     uint16_t count_end;

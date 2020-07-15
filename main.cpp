@@ -64,6 +64,7 @@ void MainWindow::on_pushButton_14_clicked() {
 }
 
 void MainWindow::on_pushButton_13_clicked() {
+    ecu_master.write.frame.head.addr = 1;
     ecu_master.write.frame.head.id = 1;
     ecu_master.write.frame.head.count = 1;
     ecu_master.write.frame.data[0] = 0x01;
