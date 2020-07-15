@@ -47,7 +47,13 @@ private:
         serial->write(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_ack_read(float * data);
+    static void ecu_protocol_crc_correct(void*,ecu_protocol_t* protocol) {
+        qDebug() << "CRC Correct" << protocol->service.crc_read;
+    }
+
+    static void ecu_protocol_crc_incorrect(void*,ecu_protocol_t* protocol) {
+        qDebug() << "CRC Incorrect" << protocol->service.crc_read;
+    }
 
 private slots:
     void on_pushButton_Connect_toggled(bool state);

@@ -47,14 +47,26 @@ typedef struct {
     uint8_t id;
     uint16_t count;
     uint16_t count_end;
+    uint16_t crc_read;
+    uint16_t crc_calc;
 } ecu_protocol_service_t;
+
+typedef struct {
+    void *user_pointer;
+    void (*callback)(void *user_pointer,void *protocol);
+} ecu_protocol_callback_t;
 
 typedef struct {
     ecu_protocol_transfer_t read;
     ecu_protocol_transfer_t write;
     ecu_protocol_service_t service;
+    ecu_protocol_callback_t crc_correct;
+    ecu_protocol_callback_t crc_incorrect;
 } ecu_protocol_t;
 
 #pragma pack()
+
+extern void ecu_protocol_service_init(ecu_protocol_t* protocol);
+extern void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available,volatile void **directory);
 
 #endif // ECU_PROTOCOL_H

@@ -37,7 +37,7 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 
             ui->pushButton_Connect->setText("Close");
             statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 5000);
-            ecu_protocol_count_init(&ecu_master);
+            ecu_protocol_service_init(&ecu_master);
 
         } else {
             qDebug() << "Serial not opened. Error:"<<serial->errorString();
@@ -64,45 +64,20 @@ void MainWindow::on_pushButton_14_clicked() {
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    //ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_WRITE | ECU_DATA_TYPE_32),1,0,64);
+    ecu_master.write.frame.head.id = 1;
+    ecu_master.write.frame.head.count = 0;
+    ecu_master.write.frame.data[0] = 0x01;
+
+    *(uint16_t*)(&ecu_master.write.frame.data[ecu_master.write.frame.head.count]) =
+                    crc16_ccitt((uint8_t*)(&ecu_master.write.frame),ECU_PROTOCOL_HEAD_COUNT + ecu_master.write.frame.head.count);
+
+    ecu_master.write.device.transfer(ecu_master.write.device.port,
+                                     (uint8_t*)(&ecu_master.write.frame),
+                                     ECU_PROTOCOL_HEAD_COUNT + ecu_master.write.frame.head.count + ECU_PROTOCOL_CRC_COUNT);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    qDebug() << "Array 0:" << ign_angle_mg_by_cycle[0];
-    qDebug() << "Array 1:" << ign_angle_mg_by_cycle[1];
-    qDebug() << "Array 2:" << ign_angle_mg_by_cycle[2];
-    qDebug() << "Array 3:" << ign_angle_mg_by_cycle[3];
-    qDebug() << "Array 4:" << ign_angle_mg_by_cycle[4];
-    qDebug() << "Array 5:" << ign_angle_mg_by_cycle[5];
-    qDebug() << "Array 6:" << ign_angle_mg_by_cycle[6];
-    qDebug() << "Array 7:" << ign_angle_mg_by_cycle[7];
-    qDebug() << "Array 8:" << ign_angle_mg_by_cycle[8];
-    qDebug() << "Array 9:" << ign_angle_mg_by_cycle[9];
-    qDebug() << "Array 10:" << ign_angle_mg_by_cycle[10];
-    qDebug() << "Array 11:" << ign_angle_mg_by_cycle[11];
-    qDebug() << "Array 12:" << ign_angle_mg_by_cycle[12];
-    qDebug() << "Array 13:" << ign_angle_mg_by_cycle[13];
-    qDebug() << "Array 14:" << ign_angle_mg_by_cycle[14];
-    qDebug() << "Array 15:" << ign_angle_mg_by_cycle[15];
-}
 
-void MainWindow::ecu_protocol_ack_read(float *data) {
-    qDebug() << "Array 0:" << data[0];
-    qDebug() << "Array 1:" << data[1];
-    qDebug() << "Array 2:" << data[2];
-    qDebug() << "Array 3:" << data[3];
-    qDebug() << "Array 4:" << data[4];
-    qDebug() << "Array 5:" << data[5];
-    qDebug() << "Array 6:" << data[6];
-    qDebug() << "Array 7:" << data[7];
-    qDebug() << "Array 8:" << data[8];
-    qDebug() << "Array 9:" << data[9];
-    qDebug() << "Array 10:" << data[10];
-    qDebug() << "Array 11:" << data[11];
-    qDebug() << "Array 12:" << data[12];
-    qDebug() << "Array 13:" << data[13];
-    qDebug() << "Array 14:" << data[14];
-    qDebug() << "Array 15:" << data[15];
 }
 
 void MainWindow::serial_readyRead() {
