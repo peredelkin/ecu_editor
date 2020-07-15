@@ -21,7 +21,7 @@ void ecu_protocol_handler(ecu_protocol_t* protocol,uint8_t bytes_available) {
                     (protocol->service.count_end - protocol->service.count)); //чтение новых данных
             protocol->service.count = protocol->service.count_end; //сдвиг точки записи фрейма
             if(protocol->service.id) { //id определен
-                protocol->service.crc_read = *(uint16_t*)(&protocol->read.frame.data[protocol->read.frame.head.count]); //чтение контрольной суммы из фрейма
+                memcpy(&protocol->service.crc_read,&protocol->read.frame.data[protocol->read.frame.head.count],ECU_PROTOCOL_CRC_COUNT); //чтение контрольной суммы из фрейма
                 protocol->service.crc_calc = crc16_ccitt((uint8_t*)(&protocol->read.frame),protocol->service.count_end - ECU_PROTOCOL_CRC_COUNT); //расчет контрольной суммы фрейма
                 if(protocol->service.crc_read == protocol->service.crc_calc) { //контрольная сумма совпадает
                     if(protocol->crc_correct.callback) { //адрес указателя не равен нулю
