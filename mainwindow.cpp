@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::serial_readyRead);
 
-    ecu_master.service.addr = 1;
+    ecu_master.service.addr = 4;
 
     ecu_master.read.device.port = serial;
     ecu_master.read.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_read);

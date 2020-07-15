@@ -64,10 +64,10 @@ void MainWindow::on_pushButton_14_clicked() {
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    ecu_master.write.frame.head.addr = 1;
-    ecu_master.write.frame.head.id = 1;
+    ecu_master.write.frame.head.addr = 4;
+    ecu_master.write.frame.head.id = 3;
     ecu_master.write.frame.head.count = 1;
-    ecu_master.write.frame.data[0] = 0x01;
+    ecu_master.write.frame.data[0] = 0x02;
 
     *(uint16_t*)(&ecu_master.write.frame.data[ecu_master.write.frame.head.count]) =
                     crc16_ccitt((uint8_t*)(&ecu_master.write.frame),ECU_PROTOCOL_HEAD_COUNT + ecu_master.write.frame.head.count);
