@@ -39,6 +39,10 @@ private:
             ign_angle_mg_by_cycle
     };
 
+    const uint8_t ecu_addr_ptrs_width[2] = {0,0};
+    const uint8_t ecu_addr_ptrs_type[2] = {0,0};
+    const uint8_t ecu_addr_ptrs_count[2] = {0,0};
+
     static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,uint16_t count) {
         serial->read(reinterpret_cast<char*>(data),count);
     }

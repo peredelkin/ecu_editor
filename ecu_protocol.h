@@ -8,14 +8,14 @@
 #define ECU_PROTOCOL_FRAME_COUNT 255
 #define ECU_PROTOCOL_DATA_COUNT (ECU_PROTOCOL_FRAME_COUNT - ECU_PROTOCOL_HEAD_COUNT) //crc included
 
-#define ECU_ID_DEFENITION               ((uint8_t)0x00)
-
-#define ECU_ID_DATA_READ                ((uint8_t)0x01)
-#define ECU_ID_DATA_WRITE               ((uint8_t)0x02)
+#define ECU_ID_DEF                      ((uint8_t)0x00)
+#define ECU_ID_READ                     ((uint8_t)0x01)
+#define ECU_ID_WRITE                    ((uint8_t)0x02)
 #define ECU_ID_ACK                      ((uint8_t)0x03)
+#define ECU_ID_RST                      ((uint8_t)0x04)
+#define ECU_ID_FIN                      ((uint8_t)0x05)
 
 #pragma pack(1)
-
 typedef struct {
     uint8_t addr;
     uint8_t id;
@@ -55,10 +55,7 @@ typedef struct {
     ecu_data_link_layer_transfer_t read;
     ecu_data_link_layer_transfer_t write;
     ecu_data_link_layer_service_t service;
-    ecu_data_link_layer_callback_t crc_correct;
-    ecu_data_link_layer_callback_t crc_incorrect;
 } ecu_data_link_layer_t;
-
 #pragma pack()
 
 extern void ecu_data_link_layer_init(ecu_data_link_layer_t* link);
