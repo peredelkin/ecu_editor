@@ -37,7 +37,7 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 
             ui->pushButton_Connect->setText("Close");
             statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 5000);
-            ecu_protocol_service_init(&ecu_master);
+            ecu_data_link_layer_service_init(&ecu_master);
 
         } else {
             qDebug() << "Serial not opened. Error:"<<serial->errorString();
@@ -65,7 +65,7 @@ void MainWindow::on_pushButton_14_clicked() {
 
 void MainWindow::on_pushButton_13_clicked() {
     uint8_t data[2] = {127,255};
-    ecu_protocol_send_frame(&ecu_master,4,3,2,data);
+    ecu_data_link_layer_send_frame(&ecu_master,4,3,2,data);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
@@ -73,5 +73,5 @@ void MainWindow::on_pushButton_12_clicked() {
 }
 
 void MainWindow::serial_readyRead() {
-    ecu_protocol_handler(&ecu_master,(uint8_t)serial->bytesAvailable());
+    ecu_data_link_layer_handler(&ecu_master,(uint8_t)serial->bytesAvailable());
 }

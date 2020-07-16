@@ -30,7 +30,7 @@ private:
 
     QSerialPort *serial;
 
-    ecu_protocol_t ecu_master;
+    ecu_data_link_layer_t ecu_master;
 
     volatile float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N];
 
@@ -47,7 +47,7 @@ private:
         serial->write(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_crc_correct(void*,ecu_protocol_t* protocol) {
+    static void ecu_protocol_crc_correct(void*,ecu_data_link_layer_t* protocol) {
         qDebug() << "CRC Correct:" << protocol->service.crc_read;
         qDebug() << "Addr:" << protocol->read.frame.head.addr;
         qDebug() << "Id:"  << protocol->read.frame.head.id;
@@ -58,7 +58,7 @@ private:
         }
     }
 
-    static void ecu_protocol_crc_incorrect(void*,ecu_protocol_t* protocol) {
+    static void ecu_protocol_crc_incorrect(void*,ecu_data_link_layer_t* protocol) {
         qDebug() << "CRC Incorrect" << protocol->service.crc_read;
     }
 
