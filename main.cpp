@@ -64,17 +64,8 @@ void MainWindow::on_pushButton_14_clicked() {
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    ecu_master.write.frame.head.addr = 4;
-    ecu_master.write.frame.head.id = 3;
-    ecu_master.write.frame.head.count = 1;
-    ecu_master.write.frame.data[0] = 0x02;
-
-    *(uint16_t*)(&ecu_master.write.frame.data[ecu_master.write.frame.head.count]) =
-                    crc16_ccitt((uint8_t*)(&ecu_master.write.frame),ECU_PROTOCOL_HEAD_COUNT + ecu_master.write.frame.head.count);
-
-    ecu_master.write.device.transfer(ecu_master.write.device.port,
-                                     (uint8_t*)(&ecu_master.write.frame),
-                                     ECU_PROTOCOL_HEAD_COUNT + ecu_master.write.frame.head.count + ECU_PROTOCOL_CRC_COUNT);
+    uint8_t data[2] = {127,255};
+    ecu_protocol_send_frame(&ecu_master,4,3,2,data);
 }
 
 void MainWindow::on_pushButton_12_clicked() {

@@ -49,10 +49,13 @@ private:
 
     static void ecu_protocol_crc_correct(void*,ecu_protocol_t* protocol) {
         qDebug() << "CRC Correct:" << protocol->service.crc_read;
-        qDebug() << "Addr:" << protocol->write.frame.head.addr;
-        qDebug() << "Id:"  << protocol->write.frame.head.id;
-        qDebug() << "Count:" << protocol->write.frame.head.count;
-        qDebug() << "Data 0:" << protocol->write.frame.data[0];
+        qDebug() << "Addr:" << protocol->read.frame.head.addr;
+        qDebug() << "Id:"  << protocol->read.frame.head.id;
+        qDebug() << "Count:" << protocol->read.frame.head.count;
+        uint8_t count = protocol->read.frame.head.count;
+        for(;count;--count) {
+            qDebug() << "Data" << count-1 << ":" << protocol->write.frame.data[count-1];
+        }
     }
 
     static void ecu_protocol_crc_incorrect(void*,ecu_protocol_t* protocol) {
