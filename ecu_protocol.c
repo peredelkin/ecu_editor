@@ -13,7 +13,7 @@ void ecu_data_link_layer_service_init(ecu_data_link_layer_t* link) {
     link->service.count_end = ECU_PROTOCOL_HEAD_COUNT;
 }
 
-void ecu_protocol_parse_frame(ecu_data_link_layer_t* link) {
+void ecu_data_link_layer_parse_frame(ecu_data_link_layer_t* link) {
     memcpy(&link->service.crc_read,&link->read.frame.data[link->read.frame.head.count],ECU_PROTOCOL_CRC_COUNT); //чтение контрольной суммы из фрейма
     link->service.crc_calc = crc16_ccitt((uint8_t*)(&link->read.frame),link->service.count_end - ECU_PROTOCOL_CRC_COUNT); //расчет контрольной суммы фрейма
     if(link->service.crc_read == link->service.crc_calc) { //контрольная сумма совпадает
@@ -37,10 +37,10 @@ void ecu_data_link_layer_handler(ecu_data_link_layer_t* link,uint8_t bytes_avail
             if(link->service.id) { //id определен
                 if(link->service.addr) {//если слейв
                     if(link->service.addr == link->read.frame.head.addr) { //адрес совпал
-                        ecu_protocol_parse_frame(link); //обработать фрейм
+                        ecu_data_link_layer_parse_frame(link); //обработать фрейм
                     }
                 } else { //иначе мастер
-                    ecu_protocol_parse_frame(link); //обработать фрейм
+                    ecu_data_link_layer_parse_frame(link); //обработать фрейм
                 }
             } else {
                 link->service.id = link->read.frame.head.id; //определение id
