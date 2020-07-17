@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+extern "C" {
+    #include <string.h>
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -64,14 +68,26 @@ void MainWindow::on_pushButton_14_clicked() {
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    uint8_t data[2] = {127,255};
-    ecu_link_layer_send_frame(&ecu_master,4,3,2,data);
+    ecu_presentation_layer_rw_t write;
+    write.addr = 1;
+    write.start = 0;
+    write.count = 4;
+    float angle = 0.5;
+    uint8_t data[5+4];
+    memcpy(data,&write,5);
+    memcpy(&data[5],&angle,4);
+    ecu_link_layer_send_frame(&ecu_master,4,ECU_SESSION_LAYER_ID_READ,9,data);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-
+    uint16_t count = 2;
+    uint16_t point = 0;
+    while(--count) {
+        qDebug() << "Angle" << point << ":" << ign_angle_mg_by_cycle[point];
+        point++;
+    }
 }
 
 void MainWindow::serial_readyRead() {
-    ecu_link_layer_handler(&ecu_master,(uint8_t)serial->bytesAvailable());
+    ecu_link_layer_handler(&ecu_master,(uint8_t)serial->bytesAvailable(),ecu_addr_ptrs);
 }
