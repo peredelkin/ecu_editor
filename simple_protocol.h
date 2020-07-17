@@ -15,7 +15,7 @@
 #define ECU_SESSION_LAYER_ID_RST    ((uint8_t)4)
 #define ECU_SESSION_LAYER_ID_FIN    ((uint8_t)5)
 
-#define ECU_PRESENTATION_LAYER_RW_COUNT ((uint8_t)5)
+#define SIMPLE_PROTOCOL_ID_RW_COUNT ((uint8_t)5)
 
 #pragma pack(1)
 typedef struct {
