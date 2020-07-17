@@ -22,22 +22,22 @@ typedef struct {
     uint8_t addr;
     uint8_t id;
     uint8_t count;
-} ecu_link_layer_head_t;
+} simple_protocol_head_t;
 
 typedef struct {
-    ecu_link_layer_head_t head;
+    simple_protocol_head_t head;
     uint8_t data[ECU_PROTOCOL_DATA_COUNT];
-} ecu_link_layer_frame_t;
+} simple_protocol_frame_t;
 
 typedef struct {
     void *port;
     void (*transfer)(void* port,uint8_t* data,uint16_t count);
-} ecu_link_layer_port_t;
+} simple_protocol_port_t;
 
 typedef struct {
-    ecu_link_layer_frame_t frame;
-    ecu_link_layer_port_t device;
-} ecu_link_layer_transfer_t;
+    simple_protocol_frame_t frame;
+    simple_protocol_port_t device;
+} simple_protocol_transfer_t;
 
 typedef struct {
     uint8_t addr; //0 if master
@@ -46,29 +46,29 @@ typedef struct {
     uint16_t count_end;
     uint16_t crc_read;
     uint16_t crc_calc;
-} ecu_link_layer_service_t;
+} simple_protocol_service_t;
 
 typedef struct {
     void *user_pointer;
     void (*callback)(void *user_pointer,void *protocol);
-} ecu_protocol_callback_t;
+} simple_protocol_callback_t;
 
 typedef struct {
-    ecu_link_layer_transfer_t read;
-    ecu_link_layer_transfer_t write;
-    ecu_link_layer_service_t service;
-} ecu_link_layer_t;
+    simple_protocol_transfer_t read;
+    simple_protocol_transfer_t write;
+    simple_protocol_service_t service;
+} simple_protocol_link_layer_t;
 
 typedef struct {
     uint16_t addr;
     uint16_t start;
     uint8_t count;
-} ecu_presentation_layer_rw_t;
+} simple_protocol_id_rw_t;
 #pragma pack()
 
-extern void ecu_link_layer_init(ecu_link_layer_t* link);
-extern void ecu_link_layer_service_init(ecu_link_layer_t* link);
-extern void ecu_link_layer_handler(ecu_link_layer_t* link,uint8_t bytes_available,volatile void** addr_ptrs);
-extern void ecu_link_layer_send_frame(ecu_link_layer_t* link,uint8_t addr,uint8_t id,uint8_t count,void* data);
+extern void simple_protocol_init(simple_protocol_link_layer_t* link);
+extern void simple_protocol_service_init(simple_protocol_link_layer_t* link);
+extern void simple_protocol_handler(simple_protocol_link_layer_t* link,uint8_t bytes_available,volatile void** addr_ptrs);
+extern void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint8_t count,void* data);
 
 #endif // ECU_PROTOCOL_H

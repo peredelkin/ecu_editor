@@ -41,7 +41,7 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 
             ui->pushButton_Connect->setText("Close");
             statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 5000);
-            ecu_link_layer_service_init(&ecu_master);
+            simple_protocol_service_init(&ecu_master);
 
         } else {
             qDebug() << "Serial not opened. Error:"<<serial->errorString();
@@ -61,14 +61,15 @@ void MainWindow::on_pushButton_15_clicked() {
         ign_angle_mg_by_cycle[point] = static_cast<float>(0.1);
         point++;
     }
+    qDebug() << "Fill";
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    //ecu_write_frame_data(&ecu_master,ecu_addr_ptrs,(ECU_CMD_READ | ECU_DATA_TYPE_32),1,0,64);
+
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    ecu_presentation_layer_rw_t write;
+    simple_protocol_id_rw_t write;
     write.addr = 1;
     write.start = 0;
     write.count = 4;
@@ -76,18 +77,19 @@ void MainWindow::on_pushButton_13_clicked() {
     uint8_t data[5+4];
     memcpy(data,&write,5);
     memcpy(&data[5],&angle,4);
-    ecu_link_layer_send_frame(&ecu_master,4,ECU_SESSION_LAYER_ID_READ,9,data);
+    simple_protocol_send_frame(&ecu_master,4,ECU_SESSION_LAYER_ID_READ,9,data);
+    qDebug() << "Write";
 }
 
 void MainWindow::on_pushButton_12_clicked() {
     uint16_t count = 2;
     uint16_t point = 0;
     while(--count) {
-        qDebug() << "Angle" << point << ":" << ign_angle_mg_by_cycle[point];
+        qDebug() << "Show angle" << point << ":" << ign_angle_mg_by_cycle[point];
         point++;
     }
 }
 
 void MainWindow::serial_readyRead() {
-    ecu_link_layer_handler(&ecu_master,(uint8_t)serial->bytesAvailable(),ecu_addr_ptrs);
+    simple_protocol_handler(&ecu_master,(uint8_t)serial->bytesAvailable(),ecu_addr_ptrs);
 }

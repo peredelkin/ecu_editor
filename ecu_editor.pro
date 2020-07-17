@@ -26,13 +26,13 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     crc16_ccitt.c \
-    ecu_protocol.c
+    simple_protocol.c
 
 HEADERS += \
         mainwindow.h \
-    ecu_protocol.h \
     crc16_ccitt.h \
-    ign_angle_mg_by_cycle.h
+    ign_angle_mg_by_cycle.h \
+    simple_protocol.h
 
 FORMS += \
         mainwindow.ui
