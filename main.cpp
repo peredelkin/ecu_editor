@@ -73,11 +73,9 @@ void MainWindow::on_pushButton_13_clicked() {
     write.addr = 1;
     write.start = 0;
     write.count = 4;
-    float angle = 0.5;
-    uint8_t data[5+4];
+    uint8_t data[5];
     memcpy(data,&write,5);
-    memcpy(&data[5],&angle,4);
-    simple_protocol_send_frame(&ecu_master,4,ECU_SESSION_LAYER_ID_READ,9,data);
+    simple_protocol_send_frame(&ecu_master,4,ECU_SESSION_LAYER_ID_WRITE,9,data);
     qDebug() << "Write";
 }
 

@@ -30,7 +30,7 @@ void simple_protocol_data_frame_write(uint16_t addr,uint16_t start,uint8_t count
 void simple_protocol_id_write(simple_protocol_link_layer_t* link,void** addr_ptrs) { //запись и отправка фрейма (!) не тестировалось
     memcpy(link->write.frame.data,link->read.frame.data,SIMPLE_PROTOCOL_ID_RW_COUNT); //копирование addr,start,count
 
-    simple_protocol_id_rw_t write;
+    simple_protocol_id_rw_t write; //заголовок данных
     memcpy(&write,link->write.frame.data,SIMPLE_PROTOCOL_ID_RW_COUNT); //получение addr,start,count
 
     link->write.frame.head.addr = link->read.frame.head.addr; //адрес устройства
@@ -68,9 +68,9 @@ void simple_protocol_id_fin(simple_protocol_link_layer_t* link) { //конец
 
 void simple_protocol_id_handler(simple_protocol_link_layer_t* link,void** addr_ptrs) {
     switch(link->read.frame.head.id) {
-    case ECU_SESSION_LAYER_ID_WRITE:  simple_protocol_id_write(link,addr_ptrs);
+    case ECU_SESSION_LAYER_ID_WRITE:  simple_protocol_id_write(link,addr_ptrs); //запись данных во фрейм
         break;
-    case ECU_SESSION_LAYER_ID_READ:   simple_protocol_id_read(link,addr_ptrs);
+    case ECU_SESSION_LAYER_ID_READ:   simple_protocol_id_read(link,addr_ptrs); //чтение данных из фрейма
         break;
     case ECU_SESSION_LAYER_ID_ACK:    simple_protocol_id_ack(link);
         break;
