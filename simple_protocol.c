@@ -27,7 +27,7 @@ void simple_protocol_data_frame_write(uint16_t addr,uint16_t start,uint8_t count
     memcpy(data,&((uint8_t*)(addr_ptrs[addr]))[start],count);
 }
 
-void simple_protocol_id_write(simple_protocol_link_layer_t* link,void** addr_ptrs) { //запись и отправка фрейма (!) не тестировалось
+void simple_protocol_id_cmd_write(simple_protocol_link_layer_t* link,void** addr_ptrs) { //запись и отправка фрейма (!) не тестировалось
     memcpy(link->write.frame.data,link->read.frame.data,SIMPLE_PROTOCOL_ID_RW_COUNT); //копирование addr,start,count
 
     simple_protocol_id_rw_t write; //заголовок данных
@@ -54,29 +54,19 @@ void simple_protocol_id_read(simple_protocol_link_layer_t* link,void** addr_ptrs
     simple_protocol_data_frame_read(read.addr,read.start,read.count,&link->read.frame.data[SIMPLE_PROTOCOL_ID_RW_COUNT],addr_ptrs);
 }
 
-void simple_protocol_id_ack(simple_protocol_link_layer_t* link) { //подтверждение
-
-}
-
-void simple_protocol_id_rst(simple_protocol_link_layer_t* link) { //сброс
-
-}
-
-void simple_protocol_id_fin(simple_protocol_link_layer_t* link) { //конец
-
+void simple_protocol_id_cmd_read(simple_protocol_link_layer_t* link) { // (!) не тестировалось
+    simple_protocol_id_rw_t read;
+    memcpy(&read,link->read.frame.data,SIMPLE_PROTOCOL_ID_RW_COUNT);
+    simple_protocol_send_frame(link,link->read.frame.head.addr,SIMPLE_PROTOCOL_ID_CMD_WRITE,SIMPLE_PROTOCOL_ID_RW_COUNT,&read);
 }
 
 void simple_protocol_id_handler(simple_protocol_link_layer_t* link,void** addr_ptrs) {
     switch(link->read.frame.head.id) {
-    case ECU_SESSION_LAYER_ID_WRITE:  simple_protocol_id_write(link,addr_ptrs); //запись данных во фрейм
+    case SIMPLE_PROTOCOL_ID_CMD_WRITE:  simple_protocol_id_cmd_write(link,addr_ptrs); //запись данных во фрейм
         break;
     case ECU_SESSION_LAYER_ID_READ:   simple_protocol_id_read(link,addr_ptrs); //чтение данных из фрейма
         break;
-    case ECU_SESSION_LAYER_ID_ACK:    simple_protocol_id_ack(link);
-        break;
-    case ECU_SESSION_LAYER_ID_RST:    simple_protocol_id_rst(link);
-        break;
-    case ECU_SESSION_LAYER_ID_FIN:    simple_protocol_id_fin(link);
+    case SIMPLE_PROTOCOL_ID_CMD_READ: simple_protocol_id_cmd_read(link); //запрос записи даных во фрейм
         break;
     };
 }
@@ -122,7 +112,7 @@ void simple_protocol_handler(simple_protocol_link_layer_t* link,uint8_t bytes_av
 
 void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint8_t count,void* data) {
     link->write.frame.head.addr = addr; //адрес
-    link->write.frame.head.id = id; //идентификатора
+    link->write.frame.head.id = id; //идентификатор
     link->write.frame.head.count = count;//количество байт
 
     if(count) {
@@ -135,4 +125,20 @@ void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,
     link->write.device.transfer
             (link->write.device.port,(uint8_t*)(&link->write.frame),
              ECU_PROTOCOL_HEAD_COUNT + link->write.frame.head.count + ECU_PROTOCOL_CRC_COUNT); //отправка фрейма
+}
+
+void simple_protocol_cmd_read(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count) {
+    simple_protocol_id_rw_t read;
+    read.addr = addr;
+    read.start = start;
+    read.count = count;
+    simple_protocol_send_frame(link,device_addr,SIMPLE_PROTOCOL_ID_CMD_WRITE,SIMPLE_PROTOCOL_ID_RW_COUNT,&read);
+}
+
+void simple_protocol_cmd_write(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count) {
+    simple_protocol_id_rw_t write;
+    write.addr = addr;
+    write.start = start;
+    write.count = count;
+    simple_protocol_send_frame(link,device_addr,SIMPLE_PROTOCOL_ID_CMD_READ,SIMPLE_PROTOCOL_ID_RW_COUNT,&write);
 }

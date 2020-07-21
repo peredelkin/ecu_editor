@@ -10,10 +10,8 @@
 
 #define ECU_SESSION_LAYER_ID_DEF    ((uint8_t)0)
 #define ECU_SESSION_LAYER_ID_READ   ((uint8_t)1)
-#define ECU_SESSION_LAYER_ID_WRITE  ((uint8_t)2)
-#define ECU_SESSION_LAYER_ID_ACK    ((uint8_t)3)
-#define ECU_SESSION_LAYER_ID_RST    ((uint8_t)4)
-#define ECU_SESSION_LAYER_ID_FIN    ((uint8_t)5)
+#define SIMPLE_PROTOCOL_ID_CMD_WRITE  ((uint8_t)2)
+#define SIMPLE_PROTOCOL_ID_CMD_READ ((uint8_t)3)
 
 #define SIMPLE_PROTOCOL_ID_RW_COUNT ((uint8_t)5)
 
@@ -70,5 +68,7 @@ extern void simple_protocol_init(simple_protocol_link_layer_t* link);
 extern void simple_protocol_service_init(simple_protocol_link_layer_t* link);
 extern void simple_protocol_handler(simple_protocol_link_layer_t* link,uint8_t bytes_available,volatile void** addr_ptrs);
 extern void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint8_t count,void* data);
+extern void simple_protocol_cmd_read(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count);
+extern void simple_protocol_cmd_write(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count);
 
 #endif // ECU_PROTOCOL_H

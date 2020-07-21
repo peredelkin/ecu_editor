@@ -65,22 +65,17 @@ void MainWindow::on_pushButton_15_clicked() {
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-
+    simple_protocol_cmd_write(&ecu_master,4,1,0,4);
+    qDebug() << "Read";
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    simple_protocol_id_rw_t write;
-    write.addr = 1;
-    write.start = 0;
-    write.count = 4;
-    uint8_t data[5];
-    memcpy(data,&write,5);
-    simple_protocol_send_frame(&ecu_master,4,ECU_SESSION_LAYER_ID_WRITE,9,data);
+    simple_protocol_cmd_read(&ecu_master,4,1,0,4);
     qDebug() << "Write";
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    uint16_t count = 2;
+    uint16_t count = 3;
     uint16_t point = 0;
     while(--count) {
         qDebug() << "Show angle" << point << ":" << ign_angle_mg_by_cycle[point];
