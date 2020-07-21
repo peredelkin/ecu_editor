@@ -50,14 +50,6 @@ void simple_protocol_id_cmd_write(simple_protocol_link_layer_t* link,void** addr
     simple_protocol_data_frame_write(write.addr,write.start,write.count,&link->write.frame.data[SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT],addr_ptrs);//копирование полезной информации
 
     simple_protocol_crc_transfer_frame(link); //расчет,копирование контрольной суммны в хвост и отправка фрейма
-
-    /*uint16_t crc_calc = crc16_ccitt((uint8_t*)(&link->write.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + link->write.frame.head.count); //вычисление контрольной суммы
-    memcpy(&link->write.frame.data[link->write.frame.head.count],&crc_calc,SIMPLE_PROTOCOL_LINK_CRC_COUNT);//копирование контрольной суммы в хвост фрейма
-
-    link->write.device.transfer
-            (link->write.device.port,(uint8_t*)(&link->write.frame),
-             SIMPLE_PROTOCOL_LINK_HEAD_COUNT + link->write.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT); //отправка фрейма
-             */
 }
 
 void simple_protocol_id_read(simple_protocol_link_layer_t* link,void** addr_ptrs) { //обработчик чтения фрейма
@@ -132,14 +124,6 @@ void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,
     }
 
     simple_protocol_crc_transfer_frame(link); //расчет,копирование контрольной суммны в хвост и отправка фрейма
-
-    /*uint16_t crc_calc = crc16_ccitt((uint8_t*)(&link->write.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + link->write.frame.head.count); //вычисление контрольной суммы
-    memcpy(&link->write.frame.data[link->write.frame.head.count],&crc_calc,SIMPLE_PROTOCOL_LINK_CRC_COUNT);//копирование контрольной суммы в хвост фрейма
-
-    link->write.device.transfer
-            (link->write.device.port,(uint8_t*)(&link->write.frame),
-             SIMPLE_PROTOCOL_LINK_HEAD_COUNT + link->write.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT); //отправка фрейма
-             */
 }
 
 void simple_protocol_cmd_read(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count) {
