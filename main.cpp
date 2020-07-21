@@ -65,12 +65,12 @@ void MainWindow::on_pushButton_15_clicked() {
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    simple_protocol_cmd_write(&ecu_master,4,1,0,4);
+    simple_protocol_cmd_read(&ecu_master,4,1,0,4);
     qDebug() << "Read";
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    simple_protocol_cmd_read(&ecu_master,4,1,0,4);
+    simple_protocol_cmd_write(&ecu_master,4,1,0,4);
     qDebug() << "Write";
 }
 
