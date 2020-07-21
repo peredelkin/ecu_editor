@@ -3,17 +3,17 @@
 
 #include "crc16_ccitt.h"
 
-#define ECU_PROTOCOL_HEAD_COUNT 3
-#define ECU_PROTOCOL_CRC_COUNT 2
-#define ECU_PROTOCOL_FRAME_COUNT 255
-#define ECU_PROTOCOL_DATA_COUNT (ECU_PROTOCOL_FRAME_COUNT - ECU_PROTOCOL_HEAD_COUNT) //crc included
+#define SIMPLE_PROTOCOL_LINK_HEAD_COUNT 3
+#define SIMPLE_PROTOCOL_LINK_CRC_COUNT 2
+#define SIMPLE_PROTOCOL_LINK_FRAME_COUNT 255
+#define SIMPLE_PROTOCOL_LINK_DATA_COUNT (SIMPLE_PROTOCOL_LINK_FRAME_COUNT - SIMPLE_PROTOCOL_LINK_HEAD_COUNT) //crc included
 
-#define ECU_SESSION_LAYER_ID_DEF    ((uint8_t)0)
-#define ECU_SESSION_LAYER_ID_READ   ((uint8_t)1)
-#define SIMPLE_PROTOCOL_ID_CMD_WRITE  ((uint8_t)2)
-#define SIMPLE_PROTOCOL_ID_CMD_READ ((uint8_t)3)
+#define SIMPLE_PROTOCOL_ID_DEF                      ((uint8_t)0)
+#define SIMPLE_PROTOCOL_ID_READ                     ((uint8_t)1)
+#define SIMPLE_PROTOCOL_ID_CMD_WRITE                ((uint8_t)2)
+#define SIMPLE_PROTOCOL_ID_CMD_READ                 ((uint8_t)3)
 
-#define SIMPLE_PROTOCOL_ID_RW_COUNT ((uint8_t)5)
+#define SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT            ((uint8_t)5)
 
 #pragma pack(1)
 typedef struct {
@@ -24,7 +24,7 @@ typedef struct {
 
 typedef struct {
     simple_protocol_head_t head;
-    uint8_t data[ECU_PROTOCOL_DATA_COUNT];
+    uint8_t data[SIMPLE_PROTOCOL_LINK_DATA_COUNT];
 } simple_protocol_frame_t;
 
 typedef struct {
