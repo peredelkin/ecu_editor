@@ -12,6 +12,7 @@
 #define SIMPLE_PROTOCOL_ID_READ                     ((uint8_t)1)
 #define SIMPLE_PROTOCOL_ID_CMD_WRITE                ((uint8_t)2)
 #define SIMPLE_PROTOCOL_ID_CMD_READ                 ((uint8_t)3)
+#define SIMPLE_PROTOCOL_ID_CMD_ACK                  ((uint8_t)4)
 
 #define SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT            ((uint8_t)5)
 
@@ -55,6 +56,10 @@ typedef struct {
     simple_protocol_transfer_t read;
     simple_protocol_transfer_t write;
     simple_protocol_service_t service;
+    simple_protocol_callback_t crc_err;
+    simple_protocol_callback_t data_received;
+    simple_protocol_callback_t data_transmitted;
+    simple_protocol_callback_t ack_received;
 } simple_protocol_link_layer_t;
 
 typedef struct {

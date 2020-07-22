@@ -51,19 +51,20 @@ private:
         serial->write(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_crc_correct(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "CRC Correct:" << protocol->service.crc_read;
-        qDebug() << "Addr:" << protocol->read.frame.head.addr;
-        qDebug() << "Id:"  << protocol->read.frame.head.id;
-        qDebug() << "Count:" << protocol->read.frame.head.count;
-        uint8_t count = protocol->read.frame.head.count;
-        for(;count;--count) {
-            qDebug() << "Data" << count-1 << ":" << protocol->write.frame.data[count-1];
-        }
+    static void ecu_protocol_data_received(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "Received";
     }
 
-    static void ecu_protocol_crc_incorrect(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "CRC Incorrect" << protocol->service.crc_read;
+    static void ecu_protocol_data_transmitted(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "Transmitted";
+    }
+
+    static void ecu_protocol_ack(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "ACK";
+    }
+
+    static void ecu_protocol_crc_err(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "CRC Error";
     }
 
 private slots:
