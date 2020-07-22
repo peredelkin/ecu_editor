@@ -60,6 +60,7 @@ typedef struct {
     simple_protocol_callback_t data_received;
     simple_protocol_callback_t data_transmitted;
     simple_protocol_callback_t ack_received;
+    simple_protocol_callback_t wrong_id;
 } simple_protocol_link_layer_t;
 
 typedef struct {

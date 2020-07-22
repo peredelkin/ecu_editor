@@ -55,9 +55,10 @@ private:
     static void ecu_protocol_data_received(void*,simple_protocol_link_layer_t* protocol) {
         simple_protocol_id_rw_t read;
         memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT);
-        if((read.start+read.count) < (16*16*4)) {
-            qDebug() << "Received:" << ((read.start+read.count)/4)-1;
-            simple_protocol_cmd_read(protocol,4,1,read.start+read.count,4);
+        qDebug() << "Received:" << (read.start)/4;
+        read.start += read.count;
+        if((read.start) < (16*16*4)) {
+            simple_protocol_cmd_read(protocol,4,1,read.start,4);
         } else {
             qDebug() << "All Received";
         }
@@ -72,7 +73,19 @@ private:
     }
 
     static void ecu_protocol_crc_err(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "CRC Error";
+        simple_protocol_id_rw_t read;
+        memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT);
+        qDebug() << "CRC Error: read" << protocol->service.crc_read << ",calc" << protocol->service.crc_calc;
+        qDebug() << "Link Addr:" << protocol->read.frame.head.addr;
+        qDebug() << "Link ID:" << protocol->read.frame.head.id;
+        qDebug() << "Link Count:" << protocol->read.frame.head.count;
+        qDebug() << "Addr:" << read.addr;
+        qDebug() << "Start:" << read.start;
+        qDebug() << "Count:" << read.count;
+    }
+
+    static void ecu_protocol_wrong_id(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "Wrong ID";
     }
 
 private slots:

@@ -8,8 +8,6 @@ void simple_protocol_init(simple_protocol_link_layer_t* link) {
 void simple_protocol_service_init(simple_protocol_link_layer_t* link) {
     link->service.id = SIMPLE_PROTOCOL_ID_DEF;
     link->service.count = 0;
-    link->service.crc_calc = 0;
-    link->service.crc_read = 0;
     link->service.count_end = SIMPLE_PROTOCOL_LINK_HEAD_COUNT;
 }
 
@@ -25,6 +23,10 @@ void simple_protocol_id_cmd_ack(simple_protocol_link_layer_t* link) {
 
 void simple_protocol_crc_err_handler(simple_protocol_link_layer_t* link) {
     simple_protocol_callback_handler(&link->crc_err,link);
+}
+
+void simple_protocol_wrong_id(simple_protocol_link_layer_t* link) {
+    simple_protocol_callback_handler(&link->wrong_id,link);
 }
 
 void simple_protocol_data_frame_read(uint16_t addr,uint16_t start,uint8_t count,void* data,void** addr_ptrs) {
@@ -48,11 +50,7 @@ void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,
     link->write.frame.head.addr = addr; //адрес
     link->write.frame.head.id = id; //идентификатор
     link->write.frame.head.count = count;//количество байт
-
-    if(count) {
-        memcpy(&link->write.frame.data,data,count);//копирование данных во фрейм
-    }
-
+    memcpy(&link->write.frame.data,data,count);//копирование данных во фрейм
     simple_protocol_crc_transfer_frame(link); //расчет,копирование контрольной суммны в хвост и отправка фрейма
 }
 
@@ -115,12 +113,12 @@ void simple_protocol_id_handler(simple_protocol_link_layer_t* link,void** addr_p
         break;
     default:
         break;
-    };
+    }
 }
 
 void simple_protocol_crc_handler(simple_protocol_link_layer_t* link,void** addr_ptrs) {
     memcpy(&link->service.crc_read,&link->read.frame.data[link->read.frame.head.count],SIMPLE_PROTOCOL_LINK_CRC_COUNT); //чтение контрольной суммы из фрейма
-    link->service.crc_calc = crc16_ccitt((uint8_t*)(&link->read.frame),link->service.count_end - SIMPLE_PROTOCOL_LINK_CRC_COUNT); //расчет контрольной суммы фрейма
+    link->service.crc_calc = crc16_ccitt((uint8_t*)(&link->read.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + link->read.frame.head.count); //расчет контрольной суммы фрейма
     if(link->service.crc_read == link->service.crc_calc) { //контрольная сумма совпадает
         simple_protocol_id_handler(link,addr_ptrs);
     } else {

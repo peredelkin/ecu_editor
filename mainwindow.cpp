@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::serial_readyRead);
 
-    ecu_master.service.addr = 4;
+    ecu_master.service.addr = 0;
 
     ecu_master.read.device.port = serial;
     ecu_master.read.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_read);
@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ecu_master.data_transmitted.user_pointer = NULL;
     ecu_master.data_transmitted.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_data_transmitted);
+
+    ecu_master.wrong_id.user_pointer = NULL;
+    ecu_master.wrong_id.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_wrong_id);
 
     QList<QSerialPortInfo> availablePorts = QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::iterator availablePorts_count;
