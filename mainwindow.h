@@ -48,11 +48,19 @@ private:
     }
 
     static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,uint16_t count) {
+        serial->waitForBytesWritten(3000);
         serial->write(reinterpret_cast<char*>(data),count);
     }
 
     static void ecu_protocol_data_received(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "Received";
+        simple_protocol_id_rw_t read;
+        memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT);
+        if((read.start+read.count) < (16*16*4)) {
+            qDebug() << "Received:" << ((read.start+read.count)/4)-1;
+            simple_protocol_cmd_read(protocol,4,1,read.start+read.count,4);
+        } else {
+            qDebug() << "All Received";
+        }
     }
 
     static void ecu_protocol_data_transmitted(void*,simple_protocol_link_layer_t* protocol) {
