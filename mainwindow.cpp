@@ -123,12 +123,8 @@ void MainWindow::on_pushButton_13_clicked() {
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    uint16_t count = (16*16) + 1;
-    uint16_t point = 0;
-    while(--count) {
-        qDebug() << "Show angle" << point << ":" << ign_angle_mg_by_cycle[point];
-        point++;
-    }
+    qDebug() << "bytesAvailable:" << serial->bytesAvailable();
+    qDebug() << "count_remain:" << ecu_master.service.count_remain;
 }
 
 void MainWindow::serial_readyRead() {

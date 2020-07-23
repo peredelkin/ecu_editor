@@ -47,8 +47,14 @@ private:
         serial->read(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,int16_t count) {
-        serial->write(reinterpret_cast<char*>(data),count);
+    //static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,int16_t count) {
+     //   serial->write(reinterpret_cast<char*>(data),count);
+    //}
+
+    static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, int16_t count) {
+        qint64 written = serial->write(reinterpret_cast<char*>(data),count);
+
+        qDebug() << "write" << count << "written" << written;
     }
 
     static void ecu_protocol_id_handler(void*,simple_protocol_link_layer_t* protocol) {
@@ -67,7 +73,7 @@ private:
         protocol->write.frame.head.count = SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT;
         read.addr = 7;
         read.start = 8;
-        read.count += 1;
+        read.count ++;
         memcpy(protocol->write.frame.data,&read,protocol->write.frame.head.count);
 
         uint16_t crc_calc = crc16_ccitt((uint8_t*)(&protocol->write.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + protocol->write.frame.head.count); //вычисление контрольной суммы
