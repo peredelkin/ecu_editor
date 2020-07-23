@@ -18,20 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ecu_master.write.device.port = serial;
     ecu_master.write.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,int16_t)>(&ecu_protocol_usart_write);
 
-    ecu_master.ack_received.user_pointer = NULL;
-    ecu_master.ack_received.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_ack);
+    ecu_master.id_handler.user_pointer = NULL;
+    ecu_master.id_handler.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_id_handler);
 
     ecu_master.crc_err.user_pointer = NULL;
     ecu_master.crc_err.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_crc_err);
-
-    ecu_master.data_received.user_pointer = NULL;
-    ecu_master.data_received.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_data_received);
-
-    ecu_master.data_transmitted.user_pointer = NULL;
-    ecu_master.data_transmitted.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_data_transmitted);
-
-    ecu_master.wrong_id.user_pointer = NULL;
-    ecu_master.wrong_id.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_wrong_id);
 
     QList<QSerialPortInfo> availablePorts = QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::iterator availablePorts_count;
@@ -106,12 +97,28 @@ void MainWindow::on_pushButton_15_clicked() {
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    simple_protocol_cmd_read(&ecu_master,4,1,0,4);
+    //simple_protocol_cmd_read(&ecu_master,4,1,0,4);
+    ecu_master.write.frame.head.id = 4;
+    ecu_master.write.frame.head.addr = 5;
+    ecu_master.write.frame.head.count = SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT;
+    simple_protocol_id_rw_t read;
+    read.addr = 7;
+    read.start = 8;
+    read.count = 0;
+    memcpy(ecu_master.write.frame.data,&read,ecu_master.write.frame.head.count);
+
+    uint16_t crc_calc = crc16_ccitt((uint8_t*)(&ecu_master.write.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + ecu_master.write.frame.head.count); //вычисление контрольной суммы
+        memcpy(&ecu_master.write.frame.data[ecu_master.write.frame.head.count],&crc_calc,SIMPLE_PROTOCOL_LINK_CRC_COUNT);//копирование контрольной суммы в хвост фрейма
+
+    ecu_master.write.device.transfer
+            (ecu_master.write.device.port,
+             (uint8_t*)(&ecu_master.write.frame),
+             SIMPLE_PROTOCOL_LINK_HEAD_COUNT + ecu_master.write.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT);
     qDebug() << "Read";
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    simple_protocol_cmd_write(&ecu_master,4,1,0,4);
+    //simple_protocol_cmd_write(&ecu_master,4,1,0,4);
     qDebug() << "Write";
 }
 
