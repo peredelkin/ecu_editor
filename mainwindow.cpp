@@ -101,11 +101,10 @@ void MainWindow::on_pushButton_14_clicked() {
     ecu_master.write.frame.head.id = 4;
     ecu_master.write.frame.head.addr = 5;
     ecu_master.write.frame.head.count = SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT;
-    simple_protocol_id_rw_t read;
-    read.addr = 7;
-    read.start = 8;
-    read.count = 0;
-    memcpy(ecu_master.write.frame.data,&read,ecu_master.write.frame.head.count);
+    ecu_master.head_id_write.addr = 7;
+    ecu_master.head_id_write.start = 8;
+    ecu_master.head_id_write.count = 0;
+    memcpy(ecu_master.write.frame.data,&ecu_master.head_id_write,ecu_master.write.frame.head.count);
 
     uint16_t crc_calc = crc16_ccitt((uint8_t*)(&ecu_master.write.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + ecu_master.write.frame.head.count); //вычисление контрольной суммы
         memcpy(&ecu_master.write.frame.data[ecu_master.write.frame.head.count],&crc_calc,SIMPLE_PROTOCOL_LINK_CRC_COUNT);//копирование контрольной суммы в хвост фрейма
@@ -123,8 +122,13 @@ void MainWindow::on_pushButton_13_clicked() {
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    qDebug() << "bytesAvailable:" << serial->bytesAvailable();
-    qDebug() << "count_remain:" << ecu_master.service.count_remain;
+    qDebug() << "bytesAvailable:" << serial->bytesAvailable() << "count_remain:" << ecu_master.service.count_remain;
+    qDebug() << "Head:"
+                "ID" << ecu_master.read.frame.head.id <<
+                "Addr" << ecu_master.read.frame.head.addr <<
+                "Count" << ecu_master.read.frame.head.count;
+    QByteArray data = serial->readAll();
+    qDebug() << data.toHex();
 }
 
 void MainWindow::serial_readyRead() {

@@ -53,18 +53,20 @@ typedef struct {
 } simple_protocol_callback_t;
 
 typedef struct {
-    simple_protocol_transfer_t read;
-    simple_protocol_transfer_t write;
-    simple_protocol_service_t service;
-    simple_protocol_callback_t crc_err;
-    simple_protocol_callback_t id_handler;
-} simple_protocol_link_layer_t;
-
-typedef struct {
     uint16_t addr;
     uint16_t start;
     int16_t count;
 } simple_protocol_id_rw_t;
+
+typedef struct {
+    simple_protocol_transfer_t read;
+    simple_protocol_transfer_t write;
+    simple_protocol_id_rw_t head_id_read;
+    simple_protocol_id_rw_t head_id_write;
+    simple_protocol_service_t service;
+    simple_protocol_callback_t crc_err;
+    simple_protocol_callback_t id_handler;
+} simple_protocol_link_layer_t;
 #pragma pack()
 
 extern void simple_protocol_service_init(simple_protocol_link_layer_t* link);
