@@ -44,12 +44,10 @@ private:
     const uint8_t ecu_addr_ptrs_count[2] = {0,0};
 
     static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,int16_t count) {
-        serial->read(reinterpret_cast<char*>(data),count);
+        qint64 readed = serial->read(reinterpret_cast<char*>(data),count);
+        qDebug() << "read" << count << "readed" << readed;
+        serial->waitForBytesWritten(3000);
     }
-
-    //static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,int16_t count) {
-     //   serial->write(reinterpret_cast<char*>(data),count);
-    //}
 
     static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, int16_t count) {
         qint64 written = serial->write(reinterpret_cast<char*>(data),count);

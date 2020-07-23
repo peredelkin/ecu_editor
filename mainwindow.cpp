@@ -112,7 +112,7 @@ void MainWindow::on_pushButton_14_clicked() {
     ecu_master.write.device.transfer
             (ecu_master.write.device.port,
              (uint8_t*)(&ecu_master.write.frame),
-             SIMPLE_PROTOCOL_LINK_HEAD_COUNT + ecu_master.write.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT);
+             (SIMPLE_PROTOCOL_LINK_HEAD_COUNT + ecu_master.write.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT));
     qDebug() << "Read";
 }
 
