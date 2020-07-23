@@ -43,12 +43,11 @@ private:
     const uint8_t ecu_addr_ptrs_type[2] = {0,0};
     const uint8_t ecu_addr_ptrs_count[2] = {0,0};
 
-    static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,uint16_t count) {
+    static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,int16_t count) {
         serial->read(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,uint16_t count) {
-        serial->waitForBytesWritten(3000);
+    static void ecu_protocol_usart_write(QSerialPort* serial,uint8_t* data,int16_t count) {
         serial->write(reinterpret_cast<char*>(data),count);
     }
 

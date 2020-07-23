@@ -30,7 +30,7 @@ typedef struct {
 
 typedef struct {
     void *port;
-    void (*transfer)(void* port,uint8_t* data,uint16_t count);
+    void (*transfer)(void* port,uint8_t* data,int16_t count);
 } simple_protocol_port_t;
 
 typedef struct {
@@ -41,8 +41,8 @@ typedef struct {
 typedef struct {
     uint8_t addr; //0 if master
     uint8_t id;
-    uint16_t count;
-    uint16_t count_end;
+    int16_t count;
+    int16_t count_end;
     uint16_t crc_read;
     uint16_t crc_calc;
 } simple_protocol_service_t;
@@ -72,7 +72,7 @@ typedef struct {
 
 extern void simple_protocol_init(simple_protocol_link_layer_t* link);
 extern void simple_protocol_service_init(simple_protocol_link_layer_t* link);
-extern void simple_protocol_handler(simple_protocol_link_layer_t* link,uint8_t bytes_available,volatile void** addr_ptrs);
+extern void simple_protocol_handler(simple_protocol_link_layer_t* link,int16_t bytes_available,volatile void** addr_ptrs);
 extern void simple_protocol_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint8_t count,void* data);
 extern void simple_protocol_cmd_read(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count);
 extern void simple_protocol_cmd_write(simple_protocol_link_layer_t* link,uint8_t device_addr,uint16_t addr,uint16_t start,uint8_t count);

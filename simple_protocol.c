@@ -126,7 +126,7 @@ void simple_protocol_crc_handler(simple_protocol_link_layer_t* link,void** addr_
     }
 }
 
-void simple_protocol_handler(simple_protocol_link_layer_t* link,uint8_t bytes_available,volatile void** addr_ptrs) {
+void simple_protocol_handler(simple_protocol_link_layer_t* link,int16_t bytes_available,volatile void** addr_ptrs) {
     if(link->service.count_end != link->service.count) { //данные не обработаны
         if(bytes_available >= (link->service.count_end - link->service.count)) { //есть новая пачка данных
             link->read.device.transfer(link->read.device.port,
