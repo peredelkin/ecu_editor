@@ -43,49 +43,20 @@ private:
     const uint8_t ecu_addr_ptrs_type[2] = {0,0};
     const uint8_t ecu_addr_ptrs_count[2] = {0,0};
 
-    static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,int16_t count) {
-        qint64 readed = serial->read(reinterpret_cast<char*>(data),count);
-        qDebug() << "read" << count << "readed" << readed;
-        serial->waitForBytesWritten(3000);
+    static void ecu_protocol_usart_read(QSerialPort* serial,uint8_t* data,uint16_t count) {
+        serial->read(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, int16_t count) {
-        qint64 written = serial->write(reinterpret_cast<char*>(data),count);
-        qDebug() << "write" << count << "written" << written;
-        serial->waitForBytesWritten(3000);
+    static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, uint16_t count) {
+        serial->write(reinterpret_cast<char*>(data),count);
     }
 
     static void ecu_protocol_id_handler(void*,simple_protocol_link_layer_t* protocol) {
-        memcpy(&protocol->head_id_read,protocol->read.frame.data,SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT);
-        qDebug() << "CRC OK: read" << protocol->service.crc_read << ",calc" << protocol->service.crc_calc;
-        qDebug() << "Link ID:" << protocol->read.frame.head.id;
-        qDebug() << "Link Addr:" << protocol->read.frame.head.addr;
-        qDebug() << "Link Count:" << protocol->read.frame.head.count;
-        qDebug() << "Addr:" << protocol->head_id_read.addr;
-        qDebug() << "Start:" << protocol->head_id_read.start;
-        qDebug() << "Count:" << protocol->head_id_read.count++;
 
-        memcpy(&protocol->write.frame.head,&protocol->read.frame.head,SIMPLE_PROTOCOL_LINK_HEAD_COUNT);
-        memcpy(protocol->write.frame.data,&protocol->head_id_read,SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT);
-
-        uint16_t crc_calc = crc16_ccitt((uint8_t*)(&protocol->write.frame),SIMPLE_PROTOCOL_LINK_HEAD_COUNT + protocol->write.frame.head.count); //вычисление контрольной суммы
-            memcpy(&protocol->write.frame.data[protocol->write.frame.head.count],&crc_calc,SIMPLE_PROTOCOL_LINK_CRC_COUNT);//копирование контрольной суммы в хвост фрейма
-
-        protocol->write.device.transfer
-                (protocol->write.device.port,
-                 (uint8_t*)(&protocol->write.frame),
-                 SIMPLE_PROTOCOL_LINK_HEAD_COUNT + protocol->write.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT);
     }
 
     static void ecu_protocol_crc_err(void*,simple_protocol_link_layer_t* protocol) {
-        memcpy(&protocol->head_id_read,protocol->read.frame.data,SIMPLE_PROTOCOL_ID_RW_HEAD_COUNT);
-        qDebug() << "CRC Err: read" << protocol->service.crc_read << ",calc" << protocol->service.crc_calc;
-        qDebug() << "Link ID:" << protocol->read.frame.head.id;
-        qDebug() << "Link Addr:" << protocol->read.frame.head.addr;
-        qDebug() << "Link Count:" << protocol->read.frame.head.count;
-        qDebug() << "Addr:" << protocol->head_id_read.addr;
-        qDebug() << "Start:" << protocol->head_id_read.start;
-        qDebug() << "Count:" << protocol->head_id_read.count;
+
     }
 
 private slots:
