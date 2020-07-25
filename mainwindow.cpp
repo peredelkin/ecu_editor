@@ -18,8 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ecu_master.write.device.port = serial;
     ecu_master.write.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_write);
 
+    ecu_master.link_id_default.user_pointer = NULL;
+    ecu_master.link_id_default.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_link_id_default_handler);
+
     ecu_master.crc_err.user_pointer = NULL;
-    ecu_master.crc_err.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_crc_err);
+    ecu_master.crc_err.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_link_crc_err);
 
     QList<QSerialPortInfo> availablePorts = QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::iterator availablePorts_count;
@@ -100,17 +103,12 @@ void MainWindow::on_pushButton_14_clicked() {
 
 void MainWindow::on_pushButton_13_clicked() {
     //simple_protocol_cmd_write(&ecu_master,4,1,0,4);
+    simple_protocol_link_send_frame(&ecu_master,0,2,0,NULL);
     qDebug() << "Write";
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    qDebug() << "bytesAvailable:" << serial->bytesAvailable() << "count_remain:" << ecu_master.service.count_remain;
-    qDebug() << "Head:"
-                "ID" << ecu_master.read.frame.head.id <<
-                "Addr" << ecu_master.read.frame.head.addr <<
-                "Count" << ecu_master.read.frame.head.count;
-    QByteArray data = serial->readAll();
-    qDebug() << data.toHex();
+
 }
 
 void MainWindow::serial_readyRead() {

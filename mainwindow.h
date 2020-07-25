@@ -51,12 +51,12 @@ private:
         serial->write(reinterpret_cast<char*>(data),count);
     }
 
-    static void ecu_protocol_id_handler(void*,simple_protocol_link_layer_t* protocol) {
-
+    static void ecu_protocol_link_id_default_handler(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "Missing IDentifier";
     }
 
-    static void ecu_protocol_crc_err(void*,simple_protocol_link_layer_t* protocol) {
-
+    static void ecu_protocol_link_crc_err(void*,simple_protocol_link_layer_t* protocol) {
+        qDebug() << "CRC Error";
     }
 
 private slots:
