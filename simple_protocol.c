@@ -21,6 +21,19 @@ void simple_protocol_callback_handler
 }
 
 /**
+ * @brief Читает данные
+ * @param data - данные для записи
+ * @param addr - номр указателя из массива указателей
+ * @param start - сдвиг
+ * @param count - количество
+ * @param addr_ptrs - указатель на массив указателей
+ */
+void simple_protocol_net_data_read
+(uint8_t* data,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
+    memcpy(data,&((uint8_t*)(addr_ptrs[addr]))[start],count);
+}
+
+/**
  * @brief Записывает данные
  * @param data - данные для чтения
  * @param addr - номер указателя из массива указателей
@@ -28,8 +41,19 @@ void simple_protocol_callback_handler
  * @param count - количество
  * @param addr_ptrs - указатель на массив указателей
  */
-void simple_protocol_net_data_write(uint8_t* data,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
+void simple_protocol_net_data_write
+(uint8_t* data,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
     memcpy(&((uint8_t*)(addr_ptrs[addr]))[start],data,count);
+}
+
+void simple_protocol_net_data_read_handler
+(simple_protocol_link_layer_t* link,simple_protocol_transfer_t* transfer,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
+    simple_protocol_net_data_read(&transfer->frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],addr,start,count,addr_ptrs);
+}
+
+void simple_protocol_net_data_write_handler
+(simple_protocol_link_layer_t* link,simple_protocol_transfer_t* transfer,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
+    simple_protocol_net_data_write(&transfer->frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],addr,start,count,addr_ptrs);
 }
 
 /**
@@ -41,11 +65,11 @@ void simple_protocol_link_id_data_head_handler
 (simple_protocol_link_layer_t* link,void** addr_ptrs) {
     memcpy(&link->read.data_head,link->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
     switch (link->read.data_head.id) {
-    case SIMPLE_PROTOCOL_NET_DATA_READ:
+    case SIMPLE_PROTOCOL_NET_DATA_READ: simple_protocol_net_data_read_handler
+                (link,&link->write,link->read.data_head.addr,link->read.data_head.start,link->read.data_head.count,addr_ptrs);
         break;
-    case SIMPLE_PROTOCOL_NET_DATA_WRITE: simple_protocol_net_data_write
-                (&link->read.frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],
-                 link->read.data_head.addr,link->read.data_head.start,link->read.data_head.count,addr_ptrs);
+    case SIMPLE_PROTOCOL_NET_DATA_WRITE: simple_protocol_net_data_write_handler
+                (link,&link->read,link->read.data_head.addr,link->read.data_head.start,link->read.data_head.count,addr_ptrs);
         break;
     default:
         break;
