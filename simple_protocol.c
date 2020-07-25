@@ -48,7 +48,13 @@ void simple_protocol_net_data_write
 
 void simple_protocol_net_data_read_handler
 (simple_protocol_link_layer_t* link,simple_protocol_transfer_t* transfer,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
+    transfer->data_head.id = SIMPLE_PROTOCOL_NET_DATA_WRITE;
+    transfer->data_head.addr = addr;
+    transfer->data_head.start = start;
+    transfer->data_head.count = count;
+    memcpy(transfer->frame.data,&transfer->data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
     simple_protocol_net_data_read(&transfer->frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],addr,start,count,addr_ptrs);
+    simple_protocol_link_send_frame(link,link->read.frame.head.addr,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT + transfer->data_head.count);
 }
 
 void simple_protocol_net_data_write_handler

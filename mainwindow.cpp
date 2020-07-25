@@ -95,6 +95,12 @@ void MainWindow::on_pushButton_15_clicked() {
 
 void MainWindow::on_pushButton_14_clicked() {
     qDebug() << "Read";
+    ecu_master.write.data_head.id = SIMPLE_PROTOCOL_NET_DATA_READ;
+    ecu_master.write.data_head.addr = 1;
+    ecu_master.write.data_head.start = 0;
+    ecu_master.write.data_head.count = 4;
+    memcpy(ecu_master.write.frame.data,&ecu_master.write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
