@@ -18,9 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ecu_master.write.device.port = serial;
     ecu_master.write.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_write);
 
-    ecu_master.link_id_default.user_pointer = NULL;
-    ecu_master.link_id_default.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_link_id_default_handler);
-
     ecu_master.crc_err.user_pointer = NULL;
     ecu_master.crc_err.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_link_crc_err);
 
@@ -87,33 +84,39 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 }
 
 void MainWindow::on_pushButton_15_clicked() {
-    uint16_t count = 256;
+    qDebug() << "Fill";
+    uint16_t count = 257;
     uint16_t point = 0;
     while(--count) {
         ign_angle_mg_by_cycle[point] = static_cast<float>(0.1);
         point++;
     }
-    qDebug() << "Fill";
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    //simple_protocol_cmd_read(&ecu_master,4,1,0,4);
     qDebug() << "Read";
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    //simple_protocol_cmd_write(&ecu_master,4,1,0,4);
-    ecu_master.write.data_head.id = 1;
-    ecu_master.write.data_head.addr = 2;
-    ecu_master.write.data_head.start = 3;
-    ecu_master.write.data_head.count = 4;
-    memcpy(ecu_master.write.frame.data,&ecu_master.write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
     qDebug() << "Write";
+    ecu_master.write.data_head.id = SIMPLE_PROTOCOL_NET_DATA_WRITE;
+    ecu_master.write.data_head.addr = 1;
+    ecu_master.write.data_head.start = 0;
+    ecu_master.write.data_head.count = 4;
+    float angle = 0.123;
+    memcpy(ecu_master.write.frame.data,&ecu_master.write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    memcpy(&ecu_master.write.frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],&angle,ecu_master.write.data_head.count);
+    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT + ecu_master.write.data_head.count);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-
+    qDebug() << "Show";
+    uint16_t count = 2;
+    uint16_t point = 0;
+    while(--count) {
+        qDebug() << "Read" << point << ":" << ign_angle_mg_by_cycle[point];
+        point++;
+    }
 }
 
 void MainWindow::serial_readyRead() {

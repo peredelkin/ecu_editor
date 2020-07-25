@@ -3,13 +3,16 @@
 
 #include "crc16_ccitt.h"
 
+#define SIMPLE_PROTOCOL_LINK_ID_DEF             0
+#define SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD       1
+
 #define SIMPLE_PROTOCOL_LINK_HEAD_COUNT         4
 #define SIMPLE_PROTOCOL_LINK_CRC_COUNT          2
 #define SIMPLE_PROTOCOL_LINK_FRAME_COUNT        256
 #define SIMPLE_PROTOCOL_LINK_DATA_COUNT (SIMPLE_PROTOCOL_LINK_FRAME_COUNT - SIMPLE_PROTOCOL_LINK_HEAD_COUNT) //crc included
 
-#define SIMPLE_PROTOCOL_LINK_ID_DEF             0
-#define SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD       1
+#define SIMPLE_PROTOCOL_NET_DATA_READ           1
+#define SIMPLE_PROTOCOL_NET_DATA_WRITE          2
 
 #define SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT     7
 
@@ -62,7 +65,6 @@ typedef struct {
     simple_protocol_transfer_t write;
     simple_protocol_service_t service;
     simple_protocol_callback_t crc_err;
-    simple_protocol_callback_t link_id_default;
 } simple_protocol_link_layer_t;
 #pragma pack()
 

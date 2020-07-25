@@ -21,12 +21,15 @@ void simple_protocol_callback_handler
 }
 
 /**
- * @brief Обработчик ID по умолчанию.
- * @param link - указатель протокола
+ * @brief Записывает данные
+ * @param data - данные для чтения
+ * @param addr - номер указателя из массива указателей
+ * @param start - сдвиг
+ * @param count - количество
+ * @param addr_ptrs - указатель на массив указателей
  */
-void simple_protocol_link_id_default_handler
-(simple_protocol_link_layer_t* link) {
-    simple_protocol_callback_handler(&link->link_id_default,link);
+void simple_protocol_net_data_write(uint8_t* data,uint16_t addr,uint16_t start,uint16_t count,void** addr_ptrs) {
+    memcpy(&((uint8_t*)(addr_ptrs[addr]))[start],data,count);
 }
 
 /**
@@ -38,7 +41,13 @@ void simple_protocol_link_id_data_head_handler
 (simple_protocol_link_layer_t* link,void** addr_ptrs) {
     memcpy(&link->read.data_head,link->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
     switch (link->read.data_head.id) {
-    default: simple_protocol_link_id_default_handler(link);
+    case SIMPLE_PROTOCOL_NET_DATA_READ:
+        break;
+    case SIMPLE_PROTOCOL_NET_DATA_WRITE: simple_protocol_net_data_write
+                (&link->read.frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],
+                 link->read.data_head.addr,link->read.data_head.start,link->read.data_head.count,addr_ptrs);
+        break;
+    default:
         break;
     }
 }
