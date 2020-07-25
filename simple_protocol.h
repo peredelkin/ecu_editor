@@ -68,6 +68,6 @@ typedef struct {
 
 extern void simple_protocol_service_init(simple_protocol_link_layer_t* link);
 extern void simple_protocol_handler(simple_protocol_link_layer_t* link,int16_t bytes_available,volatile void** addr_ptrs);
-extern void simple_protocol_link_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint16_t count,void* data);
+extern void simple_protocol_link_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint16_t count);
 
 #endif // SIMPLE_PROTOCOL_H

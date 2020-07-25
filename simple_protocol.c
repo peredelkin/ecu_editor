@@ -135,7 +135,7 @@ void simple_protocol_handler
 }
 
 /**
- * @brief Заполняет заголовок канального уровня,копирует данные,вычисляет црц,копирует црц в хвост фрейма и отправляет.
+ * @brief Заполняет заголовок канального уровня,вычисляет црц,копирует црц в хвост фрейма и отправляет.
  * @param link - указатель на протокол
  * @param addr - адрес слейва
  * @param id - идентификатор
@@ -143,11 +143,10 @@ void simple_protocol_handler
  * @param data - указатель на передаваемые данные
  */
 void simple_protocol_link_send_frame
-(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint16_t count,void* data) {
+(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint16_t count) {
     link->write.frame.head.addr = addr;
     link->write.frame.head.id = id;
     link->write.frame.head.count = count;
-    memcpy(link->write.frame.data,data,link->write.frame.head.count);
     uint16_t crc_calc = simple_protocol_link_frame_crc_calc(&link->write);
     memcpy(&link->write.frame.data[link->write.frame.head.count],&crc_calc,SIMPLE_PROTOCOL_LINK_CRC_COUNT);
     simple_protocol_link_transfer

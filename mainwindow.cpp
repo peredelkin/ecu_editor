@@ -107,7 +107,8 @@ void MainWindow::on_pushButton_13_clicked() {
     ecu_master.write.data_head.addr = 2;
     ecu_master.write.data_head.start = 3;
     ecu_master.write.data_head.count = 4;
-    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT,&ecu_master.write.data_head);
+    memcpy(ecu_master.write.frame.data,&ecu_master.write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
     qDebug() << "Write";
 }
 
