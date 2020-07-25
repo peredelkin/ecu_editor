@@ -31,6 +31,14 @@ typedef struct {
 } simple_protocol_port_t;
 
 typedef struct {
+    uint8_t id;
+    uint16_t addr;
+    uint16_t start;
+    uint16_t count;
+} simple_protocol_data_head_t;
+
+typedef struct {
+    simple_protocol_data_head_t data_head;
     simple_protocol_frame_t frame;
     simple_protocol_port_t device;
 } simple_protocol_transfer_t;
@@ -50,18 +58,9 @@ typedef struct {
 } simple_protocol_callback_t;
 
 typedef struct {
-    uint8_t id;
-    uint16_t addr;
-    uint16_t start;
-    uint16_t count;
-} simple_protocol_data_head_t;
-
-typedef struct {
     simple_protocol_transfer_t read;
     simple_protocol_transfer_t write;
     simple_protocol_service_t service;
-    simple_protocol_data_head_t data_head_read;
-    simple_protocol_data_head_t data_head_write;
     simple_protocol_callback_t crc_err;
     simple_protocol_callback_t link_id_default;
 } simple_protocol_link_layer_t;

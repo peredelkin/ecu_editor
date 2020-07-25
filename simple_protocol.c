@@ -21,26 +21,26 @@ void simple_protocol_callback_handler
 }
 
 /**
- * @brief Обработчик идентификаторов сетевого уровня
- * @param link - протокол
- * @param addr_ptrs - массив указателей на переменные для чтения и записи
- */
-void simple_protocol_link_id_data_head_handler
-(simple_protocol_link_layer_t* link,void** addr_ptrs) {
-    memcpy(&link->data_head_read,link->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-    switch (link->data_head_read.id) {
-    default:
-        break;
-    }
-}
-
-/**
  * @brief Обработчик ID по умолчанию.
  * @param link - указатель протокола
  */
 void simple_protocol_link_id_default_handler
 (simple_protocol_link_layer_t* link) {
     simple_protocol_callback_handler(&link->link_id_default,link);
+}
+
+/**
+ * @brief Обработчик идентификаторов сетевого уровня
+ * @param link - протокол
+ * @param addr_ptrs - массив указателей на переменные для чтения и записи
+ */
+void simple_protocol_link_id_data_head_handler
+(simple_protocol_link_layer_t* link,void** addr_ptrs) {
+    memcpy(&link->read.data_head,link->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    switch (link->read.data_head.id) {
+    default: simple_protocol_link_id_default_handler(link);
+        break;
+    }
 }
 
 /**
@@ -53,7 +53,7 @@ void simple_protocol_link_id_handler
     switch (link->read.frame.head.id) {
     case SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD: simple_protocol_link_id_data_head_handler(link,addr_ptrs);
         break;
-    default: simple_protocol_link_id_default_handler(link);
+    default:
         break;
     }
 }

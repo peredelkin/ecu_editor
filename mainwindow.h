@@ -53,6 +53,10 @@ private:
 
     static void ecu_protocol_link_id_default_handler(void*,simple_protocol_link_layer_t* protocol) {
         qDebug() << "Missing IDentifier";
+        qDebug() << "ID" << protocol->read.data_head.id;
+        qDebug() << "Addr" << protocol->read.data_head.addr;
+        qDebug() << "Start" << protocol->read.data_head.start;
+        qDebug() << "Count" << protocol->read.data_head.count;
     }
 
     static void ecu_protocol_link_crc_err(void*,simple_protocol_link_layer_t* protocol) {
