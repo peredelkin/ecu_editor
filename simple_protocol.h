@@ -65,11 +65,14 @@ typedef struct {
     simple_protocol_transfer_t write;
     simple_protocol_service_t service;
     simple_protocol_callback_t crc_err;
+    volatile void** addr_ptrs;
 } simple_protocol_link_layer_t;
 #pragma pack()
 
 extern void simple_protocol_service_init(simple_protocol_link_layer_t* link);
-extern void simple_protocol_handler(simple_protocol_link_layer_t* link,int16_t bytes_available,volatile void** addr_ptrs);
+extern void simple_protocol_data_read (simple_protocol_link_layer_t* link,uint8_t dev_addr,uint16_t addr,uint16_t start,uint16_t count);
+extern void simple_protocol_data_write (simple_protocol_link_layer_t* link,uint8_t dev_addr,uint16_t addr,uint16_t start,uint16_t count);
+extern void simple_protocol_handler(simple_protocol_link_layer_t* link,int16_t bytes_available);
 extern void simple_protocol_link_send_frame(simple_protocol_link_layer_t* link,uint8_t addr,uint8_t id,uint16_t count);
 
 #endif // SIMPLE_PROTOCOL_H

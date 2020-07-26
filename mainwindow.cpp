@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::serial_readyRead);
 
     ecu_master.service.addr = 0;
+    ecu_master.addr_ptrs = ecu_addr_ptrs;
 
     ecu_master.read.device.port = serial;
     ecu_master.read.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_read);
@@ -95,12 +96,7 @@ void MainWindow::on_pushButton_15_clicked() {
 
 void MainWindow::on_pushButton_14_clicked() {
     qDebug() << "Read";
-    ecu_master.write.data_head.id = SIMPLE_PROTOCOL_NET_DATA_READ;
-    ecu_master.write.data_head.addr = 1;
-    ecu_master.write.data_head.start = 0;
-    ecu_master.write.data_head.count = 4;
-    memcpy(ecu_master.write.frame.data,&ecu_master.write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    simple_protocol_data_read (&ecu_master,0,1,0,4);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
@@ -116,17 +112,16 @@ void MainWindow::on_pushButton_13_clicked() {
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    qDebug() << "Show";
     uint16_t count = 2;
     uint16_t point = 0;
     while(--count) {
-        qDebug() << "Read" << point << ":" << ign_angle_mg_by_cycle[point];
+        qDebug() << "Show" << point << ":" << ign_angle_mg_by_cycle[point];
         point++;
     }
 }
 
 void MainWindow::serial_readyRead() {
-    simple_protocol_handler(&ecu_master,serial->bytesAvailable(),ecu_addr_ptrs);
+    simple_protocol_handler(&ecu_master,serial->bytesAvailable());
 }
 
 MainWindow::~MainWindow()
