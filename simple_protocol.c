@@ -204,6 +204,7 @@ void simple_protocol_handler
                     link->service.count_remain);
             link->service.count_current += link->service.count_remain;
             if(link->service.id) {
+                link->service.count_remain = 0;
                 if(link->service.addr) {
                     if(link->service.addr == link->read.frame.head.addr) {
                         simple_protocol_link_crc_handler(link);
@@ -211,7 +212,6 @@ void simple_protocol_handler
                 } else {
                     simple_protocol_link_crc_handler(link);
                 }
-                simple_protocol_service_init(link);
             } else {
                 link->service.id = link->read.frame.head.id;
                 link->service.count_remain = link->read.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT;

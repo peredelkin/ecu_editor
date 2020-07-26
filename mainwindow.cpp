@@ -88,32 +88,27 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 }
 
 void MainWindow::on_pushButton_15_clicked() {
-    qDebug() << "Fill";
-    uint16_t count = 257;
-    uint16_t point = 0;
-    while(--count) {
-        ign_angle_mg_by_cycle[point] = static_cast<float>(0.1);
-        point++;
-    }
+    qDebug() << "LED15";
+    GPIOD_ODR = 1<<15;
+    simple_protocol_data_write (&ecu_master,1,0,0,4);
 }
 
 void MainWindow::on_pushButton_14_clicked() {
-    qDebug() << "Read";
-    simple_protocol_data_read (&ecu_master,1,1,0,64);
+    qDebug() << "LED15";
+    GPIOD_ODR = 1<<14;
+    simple_protocol_data_write (&ecu_master,1,0,0,4);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
-    qDebug() << "Write";
-    simple_protocol_data_write (&ecu_master,1,1,0,64);
+    qDebug() << "LED13";
+    GPIOD_ODR = 1<<13;
+    simple_protocol_data_write (&ecu_master,1,0,0,4);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    uint16_t count = 17;
-    uint16_t point = 0;
-    while(--count) {
-        qDebug() << "Show" << point << ":" << ign_angle_mg_by_cycle[point];
-        point++;
-    }
+    qDebug() << "LED12";
+    GPIOD_ODR = 1<<12;
+    simple_protocol_data_write (&ecu_master,1,0,0,4);
 }
 
 void MainWindow::serial_readyRead() {

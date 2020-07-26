@@ -33,9 +33,10 @@ private:
     simple_protocol_link_layer_t ecu_master;
 
     volatile float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N];
+    volatile uint32_t GPIOD_ODR;
 
     volatile void *ecu_addr_ptrs[2] = {
-            NULL,
+            &GPIOD_ODR,
             ign_angle_mg_by_cycle
     };
 
@@ -49,6 +50,7 @@ private:
 
     static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, uint16_t count) {
         serial->write(reinterpret_cast<char*>(data),count);
+        serial->flush();
     }
 
     static void ecu_protocol_net_data_written(void*,simple_protocol_link_layer_t* protocol) {
