@@ -47,6 +47,25 @@ void simple_protocol_net_data_write
 }
 
 /**
+ * @brief Отправляет команду
+ * @param link - протокол
+ * @param dev_addr - адрес устройства
+ * @param id - идентификатор
+ * @param addr - адрес из массива указателей
+ * @param start - смещение
+ * @param count - количество
+ */
+void simple_protocol_net_cmd_send
+(simple_protocol_link_layer_t* link,uint8_t dev_addr,uint8_t id,uint16_t addr,uint16_t start,uint16_t count) {
+    link->write.data_head.id = id;
+    link->write.data_head.addr = addr;
+    link->write.data_head.start = start;
+    link->write.data_head.count = count;
+    memcpy(link->write.frame.data,&link->write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    simple_protocol_link_send_frame(link,dev_addr,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+}
+
+/**
  * @brief Отправляет запрос на чтение
  * @param link - указатель протокола
  * @param dev_addr - адрес устройства
@@ -56,12 +75,7 @@ void simple_protocol_net_data_write
  */
 void simple_protocol_data_read
 (simple_protocol_link_layer_t* link,uint8_t dev_addr,uint16_t addr,uint16_t start,uint16_t count) {
-    link->write.data_head.id = SIMPLE_PROTOCOL_NET_DATA_READ;
-    link->write.data_head.addr = addr;
-    link->write.data_head.start = start;
-    link->write.data_head.count = count;
-    memcpy(link->write.frame.data,&link->write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-    simple_protocol_link_send_frame(link,dev_addr,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+    simple_protocol_net_cmd_send(link,dev_addr,SIMPLE_PROTOCOL_NET_DATA_READ,addr,start,count);
 }
 
 /**
@@ -91,6 +105,12 @@ void simple_protocol_net_data_read_handler
 void simple_protocol_net_data_write_handler
 (simple_protocol_link_layer_t* link,uint16_t addr,uint16_t start,uint16_t count) {
     simple_protocol_net_data_write(&link->read.frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],addr,start,count,link->addr_ptrs);
+    simple_protocol_net_cmd_send(link,link->read.frame.head.addr,SIMPLE_PROTOCOL_NET_DATA_WRITTEN,addr,start,count);
+}
+
+void simple_protocol_net_data_written_handler
+(simple_protocol_link_layer_t* link) {
+    simple_protocol_callback_handler(&link->data_written,link);
 }
 
 /**
@@ -106,6 +126,8 @@ void simple_protocol_link_id_data_head_handler
         break;
     case SIMPLE_PROTOCOL_NET_DATA_WRITE: simple_protocol_net_data_write_handler
                 (link,link->read.data_head.addr,link->read.data_head.start,link->read.data_head.count);
+        break;
+    case SIMPLE_PROTOCOL_NET_DATA_WRITTEN: simple_protocol_net_data_written_handler(link);
         break;
     default:
         break;

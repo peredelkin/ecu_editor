@@ -13,6 +13,7 @@
 
 #define SIMPLE_PROTOCOL_NET_DATA_READ           1
 #define SIMPLE_PROTOCOL_NET_DATA_WRITE          2
+#define SIMPLE_PROTOCOL_NET_DATA_WRITTEN        3
 
 #define SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT     7
 
@@ -65,6 +66,7 @@ typedef struct {
     simple_protocol_transfer_t write;
     simple_protocol_service_t service;
     simple_protocol_callback_t crc_err;
+    simple_protocol_callback_t data_written;
     volatile void** addr_ptrs;
 } simple_protocol_link_layer_t;
 #pragma pack()

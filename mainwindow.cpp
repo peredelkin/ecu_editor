@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ecu_master.write.device.port = serial;
     ecu_master.write.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_write);
 
+    ecu_master.data_written.user_pointer = NULL;
+    ecu_master.data_written.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_net_data_written);
+
     ecu_master.crc_err.user_pointer = NULL;
     ecu_master.crc_err.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_link_crc_err);
 
@@ -96,23 +99,16 @@ void MainWindow::on_pushButton_15_clicked() {
 
 void MainWindow::on_pushButton_14_clicked() {
     qDebug() << "Read";
-    simple_protocol_data_read (&ecu_master,0,1,0,4);
+    simple_protocol_data_read (&ecu_master,1,1,0,64);
 }
 
 void MainWindow::on_pushButton_13_clicked() {
     qDebug() << "Write";
-    ecu_master.write.data_head.id = SIMPLE_PROTOCOL_NET_DATA_WRITE;
-    ecu_master.write.data_head.addr = 1;
-    ecu_master.write.data_head.start = 0;
-    ecu_master.write.data_head.count = 4;
-    float angle = 0.123;
-    memcpy(ecu_master.write.frame.data,&ecu_master.write.data_head,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-    memcpy(&ecu_master.write.frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],&angle,ecu_master.write.data_head.count);
-    simple_protocol_link_send_frame(&ecu_master,0,SIMPLE_PROTOCOL_LINK_ID_DATA_HEAD,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT + ecu_master.write.data_head.count);
+    simple_protocol_data_write (&ecu_master,1,1,0,64);
 }
 
 void MainWindow::on_pushButton_12_clicked() {
-    uint16_t count = 2;
+    uint16_t count = 17;
     uint16_t point = 0;
     while(--count) {
         qDebug() << "Show" << point << ":" << ign_angle_mg_by_cycle[point];
