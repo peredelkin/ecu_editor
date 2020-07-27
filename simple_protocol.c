@@ -105,12 +105,13 @@ void simple_protocol_net_data_read_handler
 void simple_protocol_net_data_write_handler
 (simple_protocol_link_layer_t* link,uint16_t addr,uint16_t start,uint16_t count) {
     simple_protocol_net_data_write(&link->read.frame.data[SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT],addr,start,count,link->addr_ptrs);
-    simple_protocol_net_cmd_send(link,link->read.frame.head.addr,SIMPLE_PROTOCOL_NET_DATA_WRITTEN,addr,start,count);
+    //simple_protocol_net_cmd_send(link,link->read.frame.head.addr,SIMPLE_PROTOCOL_NET_DATA_WRITTEN,addr,start,count);
+    simple_protocol_callback_handler(&link->data_read,link);
 }
 
 void simple_protocol_net_data_written_handler
 (simple_protocol_link_layer_t* link) {
-    simple_protocol_callback_handler(&link->data_written,link);
+    simple_protocol_callback_handler(&link->data_write,link);
 }
 
 /**

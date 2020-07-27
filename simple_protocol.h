@@ -66,7 +66,8 @@ typedef struct {
     simple_protocol_transfer_t write;
     simple_protocol_service_t service;
     simple_protocol_callback_t crc_err;
-    simple_protocol_callback_t data_written;
+    simple_protocol_callback_t data_write;
+    simple_protocol_callback_t data_read;
     volatile void** addr_ptrs;
 } simple_protocol_link_layer_t;
 #pragma pack()

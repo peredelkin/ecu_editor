@@ -30,7 +30,6 @@ SOURCES += \
     simple_protocol.c
 
 HEADERS += \
-    .h \
         mainwindow.h \
     crc16_ccitt.h \
     qtablemodel_ign_angle_mg_by_cycle.h \

@@ -47,15 +47,27 @@ private:
 
     static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, uint16_t count) {
         serial->write(reinterpret_cast<char*>(data),count);
+        serial->waitForBytesWritten(100);
         serial->flush();
     }
 
+    static void ecu_protocol_net_data_get(void*,simple_protocol_link_layer_t* protocol) {
+        simple_protocol_data_head_t read;
+        memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+        if(read.start+read.count < (16*16*4)) {
+            simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
+            qDebug() << "Прочитано" << read.start+read.count;
+        } else {
+            qDebug() << "Всё прочитано";
+        }
+    }
+
     static void ecu_protocol_net_data_written(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "Data Written";
+        qDebug() << "Записано";
     }
 
     static void ecu_protocol_link_crc_err(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "CRC Error";
+        qDebug() << "Ошибка контрольной суммы";
     }
 
 private slots:

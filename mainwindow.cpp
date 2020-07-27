@@ -25,8 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ecu_master.write.device.port = serial;
     ecu_master.write.device.transfer = reinterpret_cast<void(*)(void*,uint8_t*,uint16_t)>(&ecu_protocol_usart_write);
 
-    ecu_master.data_written.user_pointer = NULL;
-    ecu_master.data_written.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_net_data_written);
+    ecu_master.data_read.user_pointer = NULL;
+    ecu_master.data_read.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_net_data_get);
+
+    ecu_master.data_write.user_pointer = NULL;
+    ecu_master.data_write.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_net_data_written);
 
     ecu_master.crc_err.user_pointer = NULL;
     ecu_master.crc_err.callback = reinterpret_cast<void(*)(void*,void*)>(&ecu_protocol_link_crc_err);
@@ -94,11 +97,12 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
 }
 
 void MainWindow::on_pushButton_read_clicked() {
-    qDebug() << "Read";
+    qDebug() << "Прочитать";
+    simple_protocol_data_read(&ecu_master,1,1,0,64);
 }
 
 void MainWindow::on_pushButton_write_clicked() {
-    qDebug() << "Write";
+    qDebug() << "Записать";
 }
 
 void MainWindow::serial_readyRead() {

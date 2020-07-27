@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>735</width>
-    <height>549</height>
+    <width>1294</width>
+    <height>894</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,30 +29,30 @@
    <widget class="QTableView" name="tableView_value">
     <property name="geometry">
      <rect>
-      <x>165</x>
-      <y>41</y>
-      <width>561</width>
-      <height>441</height>
+      <x>160</x>
+      <y>50</y>
+      <width>1111</width>
+      <height>761</height>
      </rect>
     </property>
    </widget>
    <widget class="QTreeView" name="treeView_parameter">
     <property name="geometry">
      <rect>
-      <x>15</x>
-      <y>41</y>
+      <x>10</x>
+      <y>50</y>
       <width>141</width>
-      <height>441</height>
+      <height>761</height>
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>11</x>
       <y>3</y>
-      <width>711</width>
-      <height>27</height>
+      <width>1251</width>
+      <height>38</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -137,8 +137,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>735</width>
-     <height>22</height>
+     <width>1294</width>
+     <height>32</height>
     </rect>
    </property>
   </widget>
