@@ -198,14 +198,14 @@ void simple_protocol_link_transfer(simple_protocol_transfer_t* transfer,uint8_t*
  * @param bytes_available - доступное для чтения количество байт
  */
 void simple_protocol_handler
-(simple_protocol_link_layer_t* link,int16_t bytes_available) {
+(simple_protocol_link_layer_t* link,uint16_t bytes_available) {
     if(link->service.count_remain) {
         if(bytes_available >= link->service.count_remain) {
             simple_protocol_link_transfer(&link->read,&((uint8_t*)(&link->read.frame))[link->service.count_current],
                     link->service.count_remain);
             link->service.count_current += link->service.count_remain;
             if(link->service.id) {
-                link->service.count_remain = 0;
+                simple_protocol_service_init(link);
                 if(link->service.addr) {
                     if(link->service.addr == link->read.frame.head.addr) {
                         simple_protocol_link_crc_handler(link);

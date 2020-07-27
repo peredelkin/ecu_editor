@@ -82,23 +82,23 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
             }
 
             ui->pushButton_Connect->setText("Close");
-            statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 5000);
+            statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 1000);
             simple_protocol_service_init(&ecu_master);
 
         } else {
             qDebug() << "Serial not opened. Error:"<<serial->errorString();
         }
     } else {
+        serial->clear(QSerialPort::AllDirections);
         serial->close();
         ui->pushButton_Connect->setText("Open");
-
-        statusBar()->showMessage(QString("Порт %1 закрыт").arg(serial->portName()), 5000);
+        statusBar()->showMessage(QString("Порт %1 закрыт").arg(serial->portName()), 1000);
     }
 }
 
 void MainWindow::on_pushButton_read_clicked() {
     qDebug() << "Прочитать";
-    simple_protocol_data_read(&ecu_master,1,1,0,64);
+    simple_protocol_data_read(&ecu_master,1,1,0,128);
 }
 
 void MainWindow::on_pushButton_write_clicked() {
@@ -108,7 +108,7 @@ void MainWindow::on_pushButton_write_clicked() {
 void MainWindow::serial_readyRead() {
     simple_protocol_handler(&ecu_master,serial->bytesAvailable());
     if(serial->bytesAvailable() != 0){
-        QTimer::singleShot(0, this, &MainWindow::serial_readyRead);
+        QTimer::singleShot(10, this, &MainWindow::serial_readyRead);
     }
 }
 

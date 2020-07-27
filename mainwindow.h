@@ -47,7 +47,6 @@ private:
 
     static void ecu_protocol_usart_write(QSerialPort* serial, uint8_t* data, uint16_t count) {
         serial->write(reinterpret_cast<char*>(data),count);
-        serial->waitForBytesWritten(100);
         serial->flush();
     }
 
@@ -55,9 +54,10 @@ private:
         simple_protocol_data_head_t read;
         memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
         if(read.start+read.count < (16*16*4)) {
-            simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
             qDebug() << "Прочитано" << read.start+read.count;
+            simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
         } else {
+            simple_protocol_data_read(protocol,1,1,0,read.count);
             qDebug() << "Всё прочитано";
         }
     }
@@ -68,6 +68,9 @@ private:
 
     static void ecu_protocol_link_crc_err(void*,simple_protocol_link_layer_t* protocol) {
         qDebug() << "Ошибка контрольной суммы";
+        qDebug() << "Addr" << protocol->read.frame.head.addr;
+        qDebug() << "ID" << protocol->read.frame.head.id;
+        qDebug() << "Count" << protocol->read.frame.head.count;
     }
 
 private slots:
