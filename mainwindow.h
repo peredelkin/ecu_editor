@@ -6,12 +6,13 @@
 #include <QDebug>
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QTimer>
+
+#include "qtablemodel_ign_angle_mg_by_cycle.h"
 
 extern "C" {
     #include "simple_protocol.h"
 }
-
-#include "ign_angle_mg_by_cycle.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,13 +33,9 @@ private:
 
     simple_protocol_link_layer_t ecu_master;
 
-    volatile float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N];
     volatile uint32_t GPIOD_ODR;
 
-    volatile void *ecu_addr_ptrs[2] = {
-            &GPIOD_ODR,
-            ign_angle_mg_by_cycle
-    };
+    volatile void *ecu_addr_ptrs[2];
 
     const uint8_t ecu_addr_ptrs_width[2] = {0,0};
     const uint8_t ecu_addr_ptrs_type[2] = {0,0};
@@ -63,10 +60,8 @@ private:
 
 private slots:
     void on_pushButton_Connect_toggled(bool state);
-    void on_pushButton_15_clicked();
-    void on_pushButton_14_clicked();
-    void on_pushButton_13_clicked();
-    void on_pushButton_12_clicked();
+    void on_pushButton_read_clicked();
+    void on_pushButton_write_clicked();
     void serial_readyRead();
 };
 

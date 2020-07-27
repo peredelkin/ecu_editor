@@ -8,6 +8,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QTableModel_ign_angle_mg_by_cycle* ign_angle_mg_by_cycle_model = new QTableModel_ign_angle_mg_by_cycle(this);
+    ui->tableView_value->setModel(ign_angle_mg_by_cycle_model);
+
+    ecu_addr_ptrs[0] = &GPIOD_ODR;
+    ecu_addr_ptrs[1] = ign_angle_mg_by_cycle_model->table;
+
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::serial_readyRead);
 
     ecu_master.service.addr = 0;
@@ -87,32 +93,19 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
     }
 }
 
-void MainWindow::on_pushButton_15_clicked() {
-    qDebug() << "LED15";
-    GPIOD_ODR = 1<<15;
-    simple_protocol_data_write (&ecu_master,1,0,0,4);
+void MainWindow::on_pushButton_read_clicked() {
+    qDebug() << "Read";
 }
 
-void MainWindow::on_pushButton_14_clicked() {
-    qDebug() << "LED15";
-    GPIOD_ODR = 1<<14;
-    simple_protocol_data_write (&ecu_master,1,0,0,4);
-}
-
-void MainWindow::on_pushButton_13_clicked() {
-    qDebug() << "LED13";
-    GPIOD_ODR = 1<<13;
-    simple_protocol_data_write (&ecu_master,1,0,0,4);
-}
-
-void MainWindow::on_pushButton_12_clicked() {
-    qDebug() << "LED12";
-    GPIOD_ODR = 1<<12;
-    simple_protocol_data_write (&ecu_master,1,0,0,4);
+void MainWindow::on_pushButton_write_clicked() {
+    qDebug() << "Write";
 }
 
 void MainWindow::serial_readyRead() {
     simple_protocol_handler(&ecu_master,serial->bytesAvailable());
+    if(serial->bytesAvailable() != 0){
+        QTimer::singleShot(0, this, &MainWindow::serial_readyRead);
+    }
 }
 
 MainWindow::~MainWindow()

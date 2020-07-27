@@ -26,12 +26,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     crc16_ccitt.c \
+    qtablemodel_ign_angle_mg_by_cycle.cpp \
     simple_protocol.c
 
 HEADERS += \
+    .h \
         mainwindow.h \
     crc16_ccitt.h \
-    ign_angle_mg_by_cycle.h \
+    qtablemodel_ign_angle_mg_by_cycle.h \
     simple_protocol.h
 
 FORMS += \
