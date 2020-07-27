@@ -14,6 +14,8 @@ QVariant QTableModel_ign_angle_mg_by_cycle::data(const QModelIndex &index, int r
     switch (role) {
     case Qt::DisplayRole:
         return table[index.row()][index.column()];
+    default:
+        return QVariant();
     }
 }
 
