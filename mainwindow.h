@@ -54,16 +54,20 @@ private:
         simple_protocol_data_head_t read;
         memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
         if(read.start+read.count < (16*16*4)) {
-            qDebug() << "Прочитано" << read.start+read.count;
             simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
         } else {
-            simple_protocol_data_read(protocol,1,1,0,read.count);
             qDebug() << "Всё прочитано";
         }
     }
 
-    static void ecu_protocol_net_data_written(void*,simple_protocol_link_layer_t* protocol) {
-        qDebug() << "Записано";
+    static void ecu_protocol_net_data_write(void*,simple_protocol_link_layer_t* protocol) {
+        simple_protocol_data_head_t write;
+        memcpy(&write,protocol->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
+        if(write.start+write.count < (16*16*4)) {
+            simple_protocol_data_write(protocol,protocol->read.frame.head.addr,write.addr,write.start+write.count,write.count);
+        } else {
+            qDebug() << "Всё записано";
+        }
     }
 
     static void ecu_protocol_link_crc_err(void*,simple_protocol_link_layer_t* protocol) {
