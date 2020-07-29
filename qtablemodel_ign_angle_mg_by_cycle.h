@@ -59,7 +59,14 @@ private:
             return 0;
     }
 
-    const float scale[7] =  {-15,   0,      15,      25,     35,     45,     55};
+    const float scale_table[7] =  {
+        -5,
+        5,
+        15,
+        25,
+        35,
+        45,
+        55};
 
     const color_t color_table[7] = {
         {255,0,255},    /*фиолетовый*/
@@ -71,19 +78,19 @@ private:
         {255,255,255}   /*белый*/
     };
 
-    QColor gradient(const float value,const color_t* color_table) const  {
-        float val = min_max_float(value,scale[0],scale[5]);
-        float *val_point = (float*) bsearch(&val,scale,6,sizeof (float),bsearch_compare);
+    QColor gradient_by_value(const float value,const color_t* color,const float* scale,int scale_count) const  {
+        float val = min_max_float(value,scale[0],scale[scale_count-2]);
+        float *val_point = (float*) bsearch(&val,scale,scale_count-1,sizeof (float),bsearch_compare);
         int val_index = (int)(val_point - scale);
 
-        int red0 = color_table[val_index].r;
-        int red1 = color_table[val_index+1].r;
+        int red0 = color[val_index].r;
+        int red1 = color[val_index+1].r;
 
-        int green0 = color_table[val_index].g;
-        int green1 = color_table[val_index+1].g;
+        int green0 = color[val_index].g;
+        int green1 = color[val_index+1].g;
 
-        int blue0 = color_table[val_index].b;
-        int blue1 = color_table[val_index+1].b;
+        int blue0 = color[val_index].b;
+        int blue1 = color[val_index+1].b;
 
         float val_factor = ((float) (val - val_point[0])) / ((float) (val_point[1] - val_point[0]));
         int color_red = (red0 + ((red1 - red0) * val_factor));
