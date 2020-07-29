@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QTableModel_ign_angle_mg_by_cycle* ign_angle_mg_by_cycle_model = new QTableModel_ign_angle_mg_by_cycle(this);
     ui->tableView_value->setModel(ign_angle_mg_by_cycle_model);
+    ui->tableView_value->resizeColumnsToContents();
 
     ecu_addr_ptrs[0] = &GPIOD_ODR;
     ecu_addr_ptrs[1] = ign_angle_mg_by_cycle_model->table;

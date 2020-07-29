@@ -11,6 +11,7 @@
 #define IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MAX ign_angle_mg_by_cycle_mg_scale[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N-1]-1
 
 #include <QAbstractTableModel>
+#include <QTableView>
 #include <QBrush>
 
 class QTableModel_ign_angle_mg_by_cycle : public QAbstractTableModel
