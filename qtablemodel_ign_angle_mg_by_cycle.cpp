@@ -3,7 +3,7 @@
 
 QTableModel_ign_angle_mg_by_cycle::QTableModel_ign_angle_mg_by_cycle(QObject *parent) : QAbstractTableModel(parent)
 {
-
+    memset((void*)table,0,sizeof (float)*16*16);
 }
 
 Qt::ItemFlags QTableModel_ign_angle_mg_by_cycle::flags(const QModelIndex &index) const {
@@ -23,9 +23,22 @@ QVariant QTableModel_ign_angle_mg_by_cycle::data(const QModelIndex &index, int r
         return QVariant();
     }
 
+    float value = table[index.row()][index.column()];
+
     switch (role) {
     case Qt::DisplayRole:
-        return table[index.row()][index.column()];
+        return value;
+    case Qt::TextAlignmentRole:
+        return Qt::AlignCenter;
+    case Qt::BackgroundColorRole: {
+        color_t color = gradient(value);
+        QColor result;
+        result.setRed(color.r);
+        result.setGreen(color.g);
+        result.setBlue(color.b);
+        result.setAlpha(200);
+        return QBrush (result);
+    }
     default:
         return QVariant();
     }
