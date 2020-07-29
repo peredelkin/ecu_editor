@@ -31,13 +31,7 @@ QVariant QTableModel_ign_angle_mg_by_cycle::data(const QModelIndex &index, int r
     case Qt::TextAlignmentRole:
         return Qt::AlignCenter;
     case Qt::BackgroundColorRole: {
-        color_t color = gradient(value);
-        QColor result;
-        result.setRed(color.r);
-        result.setGreen(color.g);
-        result.setBlue(color.b);
-        result.setAlpha(200);
-        return QBrush (result);
+        return QBrush (gradient(value));
     }
     default:
         return QVariant();

@@ -64,7 +64,7 @@ private:
     const int green[7] =    {0,     0,      255,    255,    255,    0,      0};
     const int blue[7] =     {255,   255,    255,    0,      0,      0,      0};
 
-    color_t gradient(const float value) const  {
+    QColor gradient(const float value) const  {
         float val = min_max_float(value,scale[0],scale[5]);
         float *val_point = (float*) bsearch(&val,scale,6,sizeof (float),bsearch_compare);
         int val_index = (int)(val_point - scale);
@@ -83,10 +83,11 @@ private:
         int color_green = (green0 + ((green1 - green0) * val_factor));
         int color_blue = (blue0 + ((blue1 - blue0) * val_factor));
 
-        color_t result;
-        result.r = color_red;
-        result.g = color_green;
-        result.b = color_blue;
+        QColor result;
+        result.setRed(color_red);
+        result.setGreen(color_green);
+        result.setBlue(color_blue);
+        result.setAlpha(200);
         return result;
     }
 signals:
