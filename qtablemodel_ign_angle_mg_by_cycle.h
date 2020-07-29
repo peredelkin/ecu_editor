@@ -58,7 +58,7 @@ private:
             return 0;
     }
 
-    const float scale[7] =  {-10,   0,      15,     25,     35,     45,     55};
+    const float scale[7] =  {-15,   0,      15,      25,     35,     45,     55};
 
     const int red[7] =      {255,   0,      0,      0,      255,    255,    0};
     const int green[7] =    {0,     0,      255,    255,    255,    0,      0};
