@@ -58,15 +58,15 @@ private:
             return 0;
     }
 
-    const float scale[5] = {-10,20,40,45,50};
+    const float scale[7] =  {-10,   0,      15,     25,     35,     45,     55};
 
-    const int red[4] = {0,0,255,0};
-    const int green[4] = {0,255,0,0};
-    const int blue[4] = {255,0,0,0};
+    const int red[7] =      {255,   0,      0,      0,      255,    255,    0};
+    const int green[7] =    {0,     0,      255,    255,    255,    0,      0};
+    const int blue[7] =     {255,   255,    255,    0,      0,      0,      0};
 
     color_t gradient(const float value) const  {
-        float val = min_max_float(value,scale[0],scale[3]);
-        float *val_point = (float*) bsearch(&val,scale,4,sizeof (float),bsearch_compare);
+        float val = min_max_float(value,scale[0],scale[5]);
+        float *val_point = (float*) bsearch(&val,scale,6,sizeof (float),bsearch_compare);
         int val_index = (int)(val_point - scale);
 
         int red0 = red[val_index];
