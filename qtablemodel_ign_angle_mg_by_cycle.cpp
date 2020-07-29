@@ -33,7 +33,7 @@ QVariant QTableModel_ign_angle_mg_by_cycle::data(const QModelIndex &index, int r
     case Qt::TextAlignmentRole:
         return Qt::AlignCenter;
     case Qt::BackgroundColorRole:
-        return QBrush (gradient(value));
+        return QBrush (gradient(value,color_table));
     case Qt::SizeHintRole:
         return Qt::MinimumSize;
     default:
