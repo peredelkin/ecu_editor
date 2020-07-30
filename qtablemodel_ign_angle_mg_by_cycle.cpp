@@ -1,6 +1,25 @@
 #include "qtablemodel_ign_angle_mg_by_cycle.h"
 #include <string.h>
 
+static const qreal scale_table[7] =  {
+    -5,
+    5,
+    15,
+    25,
+    35,
+    45,
+    55};
+
+static const QColor color_table[7] = {
+    QColor(255,0,255,100),
+    QColor(0,0,255,100),
+    QColor(0,255,255,100),
+    QColor(0,255,0,100),
+    QColor(255,255,0,100),
+    QColor(255,0,0,100),
+    QColor(255,255,255,100),
+};
+
 QTableModel_ign_angle_mg_by_cycle::QTableModel_ign_angle_mg_by_cycle(QObject *parent) : QAbstractTableModel(parent)
 {
     memset((void*)table,0,sizeof (float)*16*16);
@@ -33,7 +52,7 @@ QVariant QTableModel_ign_angle_mg_by_cycle::data(const QModelIndex &index, int r
     case Qt::TextAlignmentRole:
         return Qt::AlignCenter;
     case Qt::BackgroundColorRole:
-        return QBrush (QColorGradientByValue::gradient_by_value(value,color_table,scale_table,7));
+        return QBrush (QColorGradientByValue::gradient(value,color_table,scale_table,7));
     case Qt::SizeHintRole:
         return Qt::MinimumSize;
     default:

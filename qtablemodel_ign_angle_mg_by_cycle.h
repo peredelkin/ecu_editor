@@ -31,24 +31,7 @@ public:
     const uint16_t mg_scale[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N] = { 29,57,85,113,141,169,197,225,253,281,309,337,365,393,421,449 };
     volatile float table[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N][IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N];
 private:
-    const qreal scale_table[7] =  {
-        -5,
-        5,
-        15,
-        25,
-        35,
-        45,
-        55};
 
-    const QColor color_table[7] = {
-        QColor(255,0,255,100),
-        QColor(0,0,255,100),
-        QColor(0,255,255,100),
-        QColor(0,255,0,100),
-        QColor(255,255,0,100),
-        QColor(255,0,0,100),
-        QColor(255,255,255,100),
-    };
 signals:
 
 };
