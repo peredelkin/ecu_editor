@@ -13,6 +13,7 @@
 #include <QAbstractTableModel>
 #include <QTableView>
 #include <QBrush>
+#include <QFont>
 
 class QTableModel_ign_angle_mg_by_cycle : public QAbstractTableModel
 {
@@ -68,39 +69,43 @@ private:
         45,
         55};
 
-    const color_t color_table[7] = {
-        {255,0,255},    /*фиолетовый*/
-        {0,0,255},      /*синий*/
-        {0,255,255},    /*голубой*/
-        {0,255,0},      /*зеленый*/
-        {255,255,0},    /*желтый*/
-        {255,0,0},      /*красный*/
-        {255,255,255}   /*белый*/
+    //const color_t color_table[7] = {
+    //    {255,0,255},    /*фиолетовый*/
+    //    {0,0,255},      /*синий*/
+    //    {0,255,255},    /*голубой*/
+    //    {0,255,0},      /*зеленый*/
+    //    {255,255,0},    /*желтый*/
+    //    {255,0,0},      /*красный*/
+    //    {255,255,255}   /*белый*/
+    //};
+
+    const QColor color_table[7] = {
+        QColor(255,0,255),
+        QColor(0,0,255),
+        QColor(0,255,255),
+        QColor(0,255,0),
+        QColor(255,255,0),
+        QColor(255,0,0),
+        QColor(255,255,255),
     };
 
-    QColor gradient_by_value(const float value,const color_t* color,const float* scale,int scale_count) const  {
+    qreal gradient_interpolation(const qreal color0,const qreal color1,const qreal factor) const {
+        return (color0 + ((color1 - color0) * factor));
+    }
+
+    QColor gradient_by_value(const float value,const QColor* color,const float* scale,int scale_count) const  {
         float val = min_max_float(value,scale[0],scale[scale_count-2]);
         float *val_point = (float*) bsearch(&val,scale,scale_count-1,sizeof (float),bsearch_compare);
         int val_index = (int)(val_point - scale);
 
-        int red0 = color[val_index].r;
-        int red1 = color[val_index+1].r;
-
-        int green0 = color[val_index].g;
-        int green1 = color[val_index+1].g;
-
-        int blue0 = color[val_index].b;
-        int blue1 = color[val_index+1].b;
-
-        float val_factor = ((float) (val - val_point[0])) / ((float) (val_point[1] - val_point[0]));
-        int color_red = (red0 + ((red1 - red0) * val_factor));
-        int color_green = (green0 + ((green1 - green0) * val_factor));
-        int color_blue = (blue0 + ((blue1 - blue0) * val_factor));
-
+        QColor color0 = color[val_index];
+        QColor color1 = color[val_index+1];
         QColor result;
-        result.setRed(color_red);
-        result.setGreen(color_green);
-        result.setBlue(color_blue);
+
+        float factor = ((float) (val - val_point[0])) / ((float) (val_point[1] - val_point[0]));
+        result.setRedF(gradient_interpolation(color0.redF(),color1.redF(),factor));
+        result.setGreenF(gradient_interpolation(color0.greenF(),color1.greenF(),factor));
+        result.setBlueF(gradient_interpolation(color0.blueF(),color1.blueF(),factor));
         result.setAlpha(200);
         return result;
     }
