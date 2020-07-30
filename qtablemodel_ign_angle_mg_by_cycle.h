@@ -36,7 +36,7 @@ private:
         int b;
     } color_t;
 
-    float min_max_float(const float data,const float min,const float max) const {
+    qreal min_max_qreal(const qreal data,const qreal min,const qreal max) const {
         if(data > max) {
             return max;
         } else {
@@ -83,8 +83,8 @@ private:
         return (color0 + ((color1 - color0) * factor));
     }
 
-    QColor gradient_by_value(const float value,const QColor* color,const qreal* scale,int scale_count) const  {
-        qreal val = min_max_float(value,scale[0],scale[scale_count-2]);
+    QColor gradient_by_value(const qreal value,const QColor* color,const qreal* scale,int scale_count) const  {
+        qreal val = min_max_qreal(value,scale[0],scale[scale_count-2]);
         qreal *val_point = (qreal*) bsearch(&val,scale,scale_count-1,sizeof (qreal),bsearch_gradient_compare);
         int val_index = (int)(val_point - scale);
 
