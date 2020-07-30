@@ -32,6 +32,7 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     crc16_ccitt.h \
+    qcolorgradientbyvalue.h \
     qtablemodel_ign_angle_mg_by_cycle.h \
     simple_protocol.h
 
