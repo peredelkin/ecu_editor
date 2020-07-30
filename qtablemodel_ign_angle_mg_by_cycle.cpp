@@ -1,28 +1,32 @@
 #include "qtablemodel_ign_angle_mg_by_cycle.h"
 #include <string.h>
 
-static const qreal scale_table[7] =  {
+static const qreal scale_table[9] =  {
+    -15,
     -5,
     5,
     15,
     25,
     35,
     45,
-    55};
+    55,
+    65
+};
 
-static const QColor color_table[7] = {
+static const QColor color_table[8] = {
+    QColor(0,0,0,127),
     QColor(255,0,255,100),
     QColor(0,0,255,100),
     QColor(0,255,255,100),
     QColor(0,255,0,100),
     QColor(255,255,0,100),
     QColor(255,0,0,100),
-    QColor(255,255,255,100),
+    QColor(255,255,255,127),
 };
 
 QTableModel_ign_angle_mg_by_cycle::QTableModel_ign_angle_mg_by_cycle(QObject *parent) : QAbstractTableModel(parent)
 {
-    memset((void*)table,0,sizeof (float)*16*16);
+    memset((void*)table,0,sizeof (float)*IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N);
 }
 
 Qt::ItemFlags QTableModel_ign_angle_mg_by_cycle::flags(const QModelIndex &index) const {
@@ -69,7 +73,7 @@ QVariant QTableModel_ign_angle_mg_by_cycle::data(const QModelIndex &index, int r
     case Qt::TextAlignmentRole:
         return Qt::AlignCenter;
     case Qt::BackgroundColorRole:
-        return QBrush (QColorGradientByValue::gradient(value,color_table,scale_table,7));
+        return QBrush (QColorGradientByValue::gradient(value,color_table,scale_table,9));
     default:
         return QVariant();
     }
