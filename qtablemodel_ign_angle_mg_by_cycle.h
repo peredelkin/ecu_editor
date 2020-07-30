@@ -48,7 +48,7 @@ private:
         }
     }
 
-    static int bsearch_compare(const void *ap, const void *bp)
+    static int bsearch_gradient_compare(const void *ap, const void *bp)
     {
         const qreal *a = (qreal *) ap;
         const qreal *b = (qreal *) bp;
@@ -85,7 +85,7 @@ private:
 
     QColor gradient_by_value(const float value,const QColor* color,const qreal* scale,int scale_count) const  {
         qreal val = min_max_float(value,scale[0],scale[scale_count-2]);
-        qreal *val_point = (qreal*) bsearch(&val,scale,scale_count-1,sizeof (qreal),bsearch_compare);
+        qreal *val_point = (qreal*) bsearch(&val,scale,scale_count-1,sizeof (qreal),bsearch_gradient_compare);
         int val_index = (int)(val_point - scale);
 
         QColor color0 = color[val_index];
