@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableView_value->setModel(ign_angle_mg_by_cycle_model);
     ui->tableView_value->resizeColumnsToContents();
-    ui->tableView_value->set_x(15.5);
-    ui->tableView_value->set_y(15.5);
+    ui->tableView_value->set_x(7.5);
+    ui->tableView_value->set_y(7.5);
 
     ecu_addr_ptrs[0] = &GPIOD_ODR;
     ecu_addr_ptrs[1] = ign_angle_mg_by_cycle_model->table;

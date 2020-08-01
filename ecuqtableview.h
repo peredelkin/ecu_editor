@@ -24,6 +24,9 @@ private:
     QPen pen;
     QBrush brush;
 
+    int diameter = 10;
+    int radius = 5;
+
     float x_val = 0;
     float y_val = 0;
 
@@ -45,11 +48,12 @@ private:
 
         int x = static_cast<int>(x0 + ((x1 - x0) * x_factor));
         int y = static_cast<int>(y0 + ((y1 - y0) * y_factor));
+        radius = diameter/2;
 
         QPainter painter(viewport());
         painter.setPen(pen);
         painter.setBrush(brush);
-        painter.drawEllipse(x-5,y-5,10,10);
+        painter.drawEllipse(x-radius,y-radius,diameter,diameter);
     }
 
 };
