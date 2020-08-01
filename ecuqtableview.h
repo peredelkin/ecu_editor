@@ -24,7 +24,7 @@ private:
     QPen pen;
     QBrush brush;
 
-    int diameter = 100;
+    int diameter = 20;
     int radius = 0;
 
     float x_val = 0;
