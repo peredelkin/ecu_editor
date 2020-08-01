@@ -24,8 +24,8 @@ private:
     QPen pen;
     QBrush brush;
 
-    int diameter = 10;
-    int radius = 5;
+    int diameter = 100;
+    int radius = 0;
 
     float x_val = 0;
     float y_val = 0;
@@ -51,6 +51,7 @@ private:
         radius = diameter/2;
 
         QPainter painter(viewport());
+        painter.setRenderHint(QPainter::Antialiasing);
         painter.setPen(pen);
         painter.setBrush(brush);
         painter.drawEllipse(x-radius,y-radius,diameter,diameter);
