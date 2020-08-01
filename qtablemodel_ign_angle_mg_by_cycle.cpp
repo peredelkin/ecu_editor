@@ -24,7 +24,7 @@ static const QColor color_table[8] = {
     QColor(255,255,255,127),
 };
 
-QTableModel_ign_angle_mg_by_cycle::QTableModel_ign_angle_mg_by_cycle(QObject *parent) : QAbstractTableModel(parent)
+QTableModel_ign_angle_mg_by_cycle::QTableModel_ign_angle_mg_by_cycle(QWidget *parent) : QAbstractTableModel(parent)
 {
     memset((void*)table,0,sizeof (float)*IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N);
 }

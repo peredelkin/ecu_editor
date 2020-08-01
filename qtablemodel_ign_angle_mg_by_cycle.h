@@ -20,7 +20,7 @@ class QTableModel_ign_angle_mg_by_cycle : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit QTableModel_ign_angle_mg_by_cycle(QObject *parent = nullptr);
+    explicit QTableModel_ign_angle_mg_by_cycle(QWidget *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant headerData(int section, Qt::Orientation orientation,int role) const;

@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    ecuqtableview.cpp \
         main.cpp \
         mainwindow.cpp \
     crc16_ccitt.c \
@@ -30,6 +31,7 @@ SOURCES += \
     simple_protocol.c
 
 HEADERS += \
+    ecuqtableview.h \
         mainwindow.h \
     crc16_ccitt.h \
     qcolorgradientbyvalue.h \
