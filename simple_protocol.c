@@ -6,6 +6,8 @@ void simple_protocol_service_init
     link->service.id = SIMPLE_PROTOCOL_LINK_ID_DEF;
     link->service.count_current = 0;
     link->service.count_remain = SIMPLE_PROTOCOL_LINK_HEAD_COUNT;
+    link->service.crc_calc = 0;
+    link->service.crc_read = 0;
 }
 
 /**
@@ -200,21 +202,22 @@ void simple_protocol_link_transfer(simple_protocol_transfer_t* transfer,uint8_t*
 void simple_protocol_handler
 (simple_protocol_link_layer_t* link,uint16_t bytes_available) {
     if(link->service.count_remain) {
-        simple_protocol_link_transfer(&link->read,&((uint8_t*)(&link->read.frame))[link->service.count_current],bytes_available); //прочитали всё доступное
-        link->service.count_current += bytes_available; //сдвинули
-        if(link->service.count_current >= link->service.count_remain) { //достигнуто ожидаемое количество байт
+        if(bytes_available >= link->service.count_remain) {
+            simple_protocol_link_transfer(&link->read,&((uint8_t*)(&link->read.frame))[link->service.count_current],
+                    link->service.count_remain);
+            link->service.count_current += link->service.count_remain;
             if(link->service.id) {
-                simple_protocol_service_init(link); //подготовить прием нового фрейма
-                if(link->service.addr) { //фрейим прочитан
-                    if(link->service.addr == link->read.frame.head.addr) { //слейв
+                simple_protocol_service_init(link);
+                if(link->service.addr) {
+                    if(link->service.addr == link->read.frame.head.addr) {
                         simple_protocol_link_crc_handler(link);
                     }
-                } else { //мастер
+                } else {
                     simple_protocol_link_crc_handler(link);
                 }
-            } else { //определение остатка
+            } else {
                 link->service.id = link->read.frame.head.id;
-                link->service.count_remain += link->read.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT;
+                link->service.count_remain = link->read.frame.head.count + SIMPLE_PROTOCOL_LINK_CRC_COUNT;
             }
         }
     } else {
