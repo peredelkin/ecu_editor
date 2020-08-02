@@ -69,6 +69,7 @@ typedef struct {
     simple_protocol_callback_t data_write;
     simple_protocol_callback_t data_read;
     volatile void** addr_ptrs;
+    uint32_t read_count; //debug only
 } simple_protocol_link_layer_t;
 #pragma pack()
 

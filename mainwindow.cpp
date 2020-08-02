@@ -87,7 +87,8 @@ void MainWindow::on_pushButton_Connect_toggled(bool state) {
             ui->pushButton_Connect->setText("Close");
             statusBar()->showMessage(QString("Порт %1 открыт").arg(serial->portName()), 1000);
             simple_protocol_service_init(&ecu_master);
-
+            ecu_master.read_count = 0;
+            //ecu_read_timer->start();
         } else {
             qDebug() << "Serial not opened. Error:"<<serial->errorString();
         }

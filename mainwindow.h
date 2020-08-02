@@ -27,6 +27,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private:
+    static uint16_t read_count;
+
     Ui::MainWindow *ui;
 
     QSerialPort *serial;
@@ -50,11 +52,12 @@ private:
     static void ecu_protocol_net_data_get(void*,simple_protocol_link_layer_t* protocol) {
         simple_protocol_data_head_t read;
         memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-        if(read.start+read.count < (16*16*4)) {
-            simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
-        } else {
-            qDebug() << "Всё прочитано";
-        }
+        //if(read.start+read.count < (16*16*4)) {
+        //    simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
+        //} else {
+            qDebug() << "Count" << protocol->read_count++;
+            simple_protocol_data_read(protocol,1,1,0,64);
+        //}
     }
 
     static void ecu_protocol_net_data_write(void*,simple_protocol_link_layer_t* protocol) {
@@ -72,7 +75,10 @@ private:
         qDebug() << "Addr" << protocol->read.frame.head.addr;
         qDebug() << "ID" << protocol->read.frame.head.id;
         qDebug() << "Count" << protocol->read.frame.head.count;
+        simple_protocol_service_init(protocol);
     }
+
+    void ecu_online_read();
 
 private slots:
     void on_pushButton_Connect_toggled(bool state);
