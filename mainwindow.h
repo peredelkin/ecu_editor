@@ -37,6 +37,9 @@ private:
 
     QTableModel_ign_angle_mg_by_cycle* ign_angle_mg_by_cycle_model;
 
+    float ball_x = 0;
+    float ball_y = 0;
+
     volatile uint32_t GPIOD_ODR;
     volatile void *ecu_addr_ptrs[2];
 
@@ -52,12 +55,12 @@ private:
     static void ecu_protocol_net_data_get(void*,simple_protocol_link_layer_t* protocol) {
         simple_protocol_data_head_t read;
         memcpy(&read,protocol->read.frame.data,SIMPLE_PROTOCOL_NET_DATA_HEAD_COUNT);
-        //if(read.start+read.count < (16*16*4)) {
-        //    simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
-        //} else {
+        if(read.start+read.count < (16*16*4)) {
+            simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,read.start+read.count,read.count);
+        } else {
             qDebug() << "Count" << protocol->read_count++;
-            simple_protocol_data_read(protocol,1,1,0,64);
-        //}
+            simple_protocol_data_read(protocol,protocol->read.frame.head.addr,read.addr,0,read.count);
+        }
     }
 
     static void ecu_protocol_net_data_write(void*,simple_protocol_link_layer_t* protocol) {

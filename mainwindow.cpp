@@ -11,8 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableView_value->setModel(ign_angle_mg_by_cycle_model);
     ui->tableView_value->resizeColumnsToContents();
-    ui->tableView_value->set_x(7.5);
-    ui->tableView_value->set_y(7.5);
 
     ecu_addr_ptrs[0] = &GPIOD_ODR;
     ecu_addr_ptrs[1] = ign_angle_mg_by_cycle_model->table;
@@ -58,6 +56,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox_StopBits->addItem("Stop Bits 1",QSerialPort::OneStop);
     ui->comboBox_StopBits->addItem("Stop Bits 1.5",QSerialPort::OneAndHalfStop);
     ui->comboBox_StopBits->addItem("Stop Bits 2",QSerialPort::TwoStop);
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::ecu_online_read);
+    timer->setInterval(20);
+    timer->start();
 }
 
 void MainWindow::on_pushButton_Connect_toggled(bool state) {
@@ -112,7 +115,23 @@ void MainWindow::on_pushButton_write_clicked() {
 void MainWindow::serial_readyRead() {
     simple_protocol_handler(&ecu_master,serial->bytesAvailable());
     if(serial->bytesAvailable() != 0){
-        QTimer::singleShot(10, this, &MainWindow::serial_readyRead);
+        QTimer::singleShot(0, this, &MainWindow::serial_readyRead);
+    }
+}
+
+void MainWindow::ecu_online_read() {
+    ui->tableView_value->set_x(ball_x);
+    ui->tableView_value->set_y(ball_y);
+    ui->tableView_value->viewport()->update();
+    if(ball_x < 15.8) {
+        ball_x += 0.1;
+    } else {
+        ball_x = 0.0;
+        if(ball_y < 15.8) {
+            ball_y += 0.1;
+        } else {
+            ball_y = 0.0;
+        }
     }
 }
 
